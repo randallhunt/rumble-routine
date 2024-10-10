@@ -1,0 +1,11 @@
+{
+  "name": "rumble-routine",
+  "version": "1.0.0",
+  "description": "Rumble Routine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Randy Hunt",
+  "license": "MIT"
+}
