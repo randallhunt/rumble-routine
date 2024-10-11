@@ -1,11 +1,3 @@
-class MessagedTab {
-  constructor(message) {
-    super()
-    this.message = message
-    //
-  }
-}
-
 function log(text) {
   chrome.notifications.create({
     iconUrl: chrome.runtime.getURL('icon1.jpg'),

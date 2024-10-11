@@ -11,6 +11,10 @@ function getChannel() {
   }
 }
 
+window.addEventListener('unload', () => {
+  chrome.storage.local.unset('settingsTabId')
+})
+
 chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
   const { message } = response
   if (message.type == 'show-bar') {

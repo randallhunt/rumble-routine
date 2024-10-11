@@ -1,3 +1,7 @@
+import { SettingsTabManager } from "./settings-tab-manager"
+
+const settingsManager = new SettingsTabManager('./settings.html')
+
 function log(text) {
   chrome.notifications.create({
     iconUrl: chrome.runtime.getURL('icon1.jpg'),
