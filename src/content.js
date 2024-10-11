@@ -1,5 +1,10 @@
 chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
   const { message } = response
+  if (message == 'show-bar') {
+    displayBar()
+    return
+  }
+
   if (message == "settings-opened") {
     const url = window.location
     if (
@@ -13,22 +18,59 @@ chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
       // document.querySelector('.thumbnail__thumb--live')
       return
     }
-  
   }
-  // if (message == "hello") {
-  //     chrome.tabs.create({ url: "https://www.rumble.com/" })
-  // }
-  // document.getElementById('currentSource').append(message)
 })
 
-document.addEventListener('DOMContentLoaded', () => {
-  const author = document.querySelector('[rel="author"]')
+async function sendMessage() {
+  const response = await chrome.runtime.sendMessage({ message: "hello" });
+  // do something with response here, not outside the function
+  console.log(response);
+}
 
-  // var checkPageButton = document.getElementById('clickIt');
-  // checkPageButton.addEventListener('click', function() {
 
-  //   chrome.tabs.getSelected(null, function(tab) {
-  //     alert("Hello..! It's my first chrome extension.");
-  //   });
-  // }, false);
-}, false);
+const author = document.querySelector('[rel="author"]')
+console.log(author)
+if (author) {
+  const creatorEl = author.querySelector('.media-heading-name')
+  const creator = creatorEl?.innerHTML.trim()
+  console.log(`channel: ${creator}`)
+  sendMessage()
+  displayBar()
+}
+
+function closeBar() {
+  let el = document.getElementById('rumbleroutine')
+  if (el) el.parentElement.removeChild(el)
+}
+
+async function displayBar() {
+  // let el = document.getElementById('rumbleroutine')
+  // if (el) el.parentElement.removeChild(el)
+  closeBar()
+  el = document.createElement('div')
+  el.id = 'rumbleroutine'
+  el.innerHTML = `<div>
+  Hello world
+  <span class="rumbleroutine-close">X</span>
+  </div>`
+  el.style.position = 'fixed'
+  el.style.top = '0px'
+  el.style.width = '100vw'
+  el.style.height = '40px'
+  el.style.backgroundColor = '#ccc'
+  el.style.color = '#000'
+  el.style.zIndex = 10000
+
+  const close = document.createElement('a')
+  close.href = '#'
+  close.innerHTML = 'X'
+  close.addEventListener('click', closeBar)
+  close.style.position = 'absolute'
+  close.style.right = '5px'
+  close.style.top = '5px'
+  close.style.padding = '5px'
+  close.style.border = 'solid 1px #000'
+  el.appendChild(close)
+
+  document.body.appendChild(el)
+}

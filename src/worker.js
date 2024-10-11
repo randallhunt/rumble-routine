@@ -7,44 +7,89 @@ function log(text) {
   })  
 }
 
+chrome.runtime.onInstalled.addListener(async ({reason}) => {
+  let { options } = await chrome.storage.sync.get({ options: {} })
+  if (!options) {
+    options = {}
+    await chrome.storage.sync.set({ options })
+  }
+
+  let { schedule } = await chrome.storage.sync.get({ schedule: [{
+      id: 12345,
+      name: 'InfoWars',
+      creator: 'InfoWars',
+      start: new Date()
+    }]
+  })
+  // if (!schedule) {
+  //   options.schedule = [{
+  //     id: 12345,
+  //     name: 'InfoWars',
+  //     creator: 'InfoWars',
+  //     start: new Date()
+  //   }]
+  // }
+  await chrome.storage.sync.set({ schedule })
+
+  if (reason == 'install') {
+    // add options object, maybe?
+  }
+  // if (reason == 'install' || 'update' )
+  // log(`Installed - ${reason}`)
+})
+
 chrome.action.onClicked.addListener(async () => {
   const tab = await getCurrentTab()
-  if (!tab?.url) {
-    setBadgeText('')
-    return
-  }
-  const url = new URL(tab.url)
+  // if (!tab?.url) {
+  //   setBadgeText('')
+  //   return
+  // }
+  const {hostname, pathname} = new URL(tab.url)
 
-  const rumble = /rumble\.com/.test(url.hostname)
-  log(rumble ? 'true' : 'false')
-  if (!rumble) {
-    if (
-      url.pathname.slice(0, 3) === '/c/' ||
-      url.pathname.slice(0, 2) === '/v'
-    ) {
-      const author = document.querySelector('[rel="author"]')
-      const uid = author.href.split('/').pop()
-      log(uid)
-      // document.querySelector('.thumbnail__thumb--live')
-      return
-    }  
+  const rumble = /rumble\.com/.test(hostname)
+  // log(rumble ? 'true' : 'false')
+  if (rumble) {
+  //   if (
+  //     pathname.slice(0, 3) === '/c/' ||
+  //     pathname.slice(0, 2) === '/v'
+  //   ) {
+  //     const author = document.querySelector('[rel="author"]')
+  //     const uid = author.href.split('/').pop()
+  //     // log(uid)
+  //     // document.querySelector('.thumbnail__thumb--live')
+
+  //   }
+    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    const response = await chrome.tabs.sendMessage(tab.id, { message: "show-bar" });
+    return
   }
 
   //
   chrome.tabs.create({ url: 'settings.html' }, (tab) => {
-    log(`tab created ${tab.id}`)
+    // log(`tab created ${tab.id}`)
   })
 })
 
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+    if (request.message === "hello")
+      sendResponse({farewell: "goodbye"});
+  }
+);
+
 // await chrome.storage.sync.set({ options })
-let options = {}
+// let options = {}
 
-async function getOptions() {
-  const options = await chrome.storage.sync.get('options')
-  console.log('options', options)
-}
-getOptions()
+// async function getOptions() {
+//   const options = await chrome.storage.sync.get('options')
+//   console.log('options', options)
+// }
+// getOptions()
 
+chrome.action.iconUrl = chrome.runtime.getURL('icon.svg')
 
 // chrome.runtime.onInstalled.addListener(({reason}) => {
 //   if (reason === 'install') {
@@ -104,7 +149,6 @@ async function getCurrentTab() {
 
 chrome.tabs.onActivated.addListener((tabInfo) => {
   // const { tabId, windowId } = tabInfo
-  // log("tab activated")
   updateAction()
 })
 
@@ -119,3 +163,27 @@ chrome.tabs.onCreated.addListener(() => {
 chrome.tabs.onUpdated.addListener(() => {
   updateAction()
 })
+
+chrome.webNavigation.onDOMContentLoaded.addListener(async ({ tabId, url }) => {
+  const { hostname } = new URL(url)
+  if (!/rumble\.com/.test(hostname)) return
+  log('on Rumble')
+  // if (url.pathname.slice(0, 3) === '/c/') {
+  //   setBadgeText('user')
+  //   // document.querySelector('[rel="author"]')
+  //   // document.querySelector('.thumbnail__thumb--live')
+  //   return
+  // }
+  // if (url.pathname.slice(0, 2) === '/v') {
+  //   setBadgeText('vid')
+  //   // document.querySelector('[rel="author"]')
+  //   return
+  // }
+
+  // const { options } = await chrome.storage.local.get('options');
+  chrome.scripting.executeScript({
+    target: { tabId },
+    files: ['content.js'],
+    // ...options
+  });
+});
