@@ -1,40 +1,23 @@
-export class SettingsTabManager {
+class SettingsTabManager {
   constructor(url, storageName = 'settingsTabId') {
-    super()
     this.url = url
     this.setting = storageName
     this.message = null
     this.ready = true
+    this.tabId = null
     this.waitCount = 0
     this.windowId = null
 
-    chrome.webNavigation.onDOMContentLoaded.addListener(this.domReady)
-    // async (tabId, url) => {
-    //   const setting = await chrome.storage.local.get(this.setting)
-    //   const storedTabId = setting[this.setting]
-    //   if (tabId !== storedTabId) return
-    //   if (url !== this.url) return
-    //   chrome.tabs.sendMessage(tabId, this.message)
-    //   this.message = null
-    //   this.ready = true
-    //   this.waitCount = 0
-    // })
-  }
-
-  domReady = async (tabId, url) => {
-    const setting = await chrome.storage.local.get(this.setting)
-    const storedTabId = setting[this.setting]
-    if (tabId !== storedTabId) return
-    if (url !== this.url) return
-    chrome.tabs.sendMessage(tabId, this.message)
-    this.message = null
-    this.ready = true
-    this.waitCount = 0
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      const {message} = request
+      if (message.type === 'settings-tab-ready') this.ready = true
+    })
   }
 
   waitForTab = () => {
     this.timer = setTimeout(() => {
       if (this.ready) {
+        chrome.tabs.sendMessage(this.tabId, { message: this.message })
         return
       }
       if (this.waitCount < 10) {
@@ -50,7 +33,7 @@ export class SettingsTabManager {
     this.message = message
     let tab = await this.getOpenTab()
     if (!tab) {
-      tab = createTab()
+      tab = this.createTab()
     }
     if (!message) {
       this.timer = null
@@ -58,12 +41,13 @@ export class SettingsTabManager {
     }
     this.ready = false
     this.waitCount = 0
-    thisl.waitForTab()
+    this.waitForTab()
   }
 
   createTab = async () => {
-    const tab = chrome.tabs.create({url: this.url})
+    const tab = await chrome.tabs.create({url: this.url})
     await chrome.storage.local.set({[this.setting]: tab.id})
+    this.tabId = tab.id
     return tab
   }
 
@@ -73,6 +57,7 @@ export class SettingsTabManager {
     const tab = await chrome.tabs.get(tabId)
     if (tab.url == this.url) {
       chrome.tabs.highlight({ tabs: tab.id })
+      this.tabId = tab.id
       return tab
     }
     return null
