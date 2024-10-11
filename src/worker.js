@@ -1,4 +1,4 @@
-import { SettingsTabManager } from "./settings-tab-manager"
+importScripts('./settings-tab-manager.js')
 
 const settingsManager = new SettingsTabManager('./settings.html')
 
@@ -68,14 +68,10 @@ chrome.action.onClicked.addListener(async () => {
     return
   }
 
-  //
-  chrome.tabs.create({ url: 'settings.html' }, (tab) => {
-    // log(`tab created ${tab.id}`)
-  })
+  settingsManager.openSettingsTab()
 })
 
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const {message} = request
     console.log(sender.tab ?
                 "from a content script:" + sender.tab.url :
@@ -85,10 +81,11 @@ chrome.runtime.onMessage.addListener(
       log(data)
       // log(`add ${message.channel} to schedule`)
 
-      chrome.tabs.create({ url: 'settings.html' }, async (tab) => {
-        const response = await chrome.tabs.sendMessage(tab.id, message)
-        // log(`tab created ${tab.id}`)
-      })
+      settingsManager.openSettingsTab(message)
+      // chrome.tabs.create({ url: 'settings.html' }, async (tab) => {
+      //   const response = await chrome.tabs.sendMessage(tab.id, message)
+      //   // log(`tab created ${tab.id}`)
+      // })
     
     }
     // if (request.message.type === "hello")
