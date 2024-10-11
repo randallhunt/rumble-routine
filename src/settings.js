@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 window.addEventListener('unload', () => {
-  chrome.storage.local.unset('settingsTabId')
+  chrome.storage.local.remove('settingsTabId')
 })
 
 chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
