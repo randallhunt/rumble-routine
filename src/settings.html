@@ -1,28 +1,26 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./popup.css" />
+    <link rel="stylesheet" href="./settings.css" />
   </head>
 
   <body>
     <header>
-      <h1><img src="default_icon.svg" width="32" height="32" /> Rumble Routine</h1>
+      <h1><img src="icon.svg" width="32" height="32" /> Rumble Routine</h1>
     </header>
     <!-- <p>tab number <span id="tabNum" /></p> -->
     <div id="currentSource"></div>
-    <table id="scheduleTable">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Creator</th>
-          <th>Start</th>
-          <th></th>
-        </tr>  
-      </thead>
-      <tbody id="scheduleBody"></tbody>
-    </table>
+    <div id="scheduleTable">
+      <div class="schedule-row">
+        <div class="schedule-name heading">Name</div>
+        <div class="schedule-creator heading">Creator</div>
+        <div class="schedule-schedule heading">Schedule</div>
+        <div class="schedule-actions heading">&nbsp;</div>
+      </div>
+    </div>
   </body>
   <script src="settings.js"></script>
 </html>
