@@ -2,18 +2,14 @@ function getChannel() {
   const channelEl = document.querySelector('[rel="author"]')
   if (!channelEl) return null
   const channel = channelEl.href.split('/').pop()
-  const author = channelEl.querySelector('.media-heading-name').innerHTML.trim()
-  // const authorEl = document.querySelector('.thumbnail__thumb--live')
+  const authorEl = channelEl.querySelector('.media-heading-name')
+  const author = authorEl?.innerHTML.trim()
 
   return {
     author,
     channel
   }
 }
-
-window.addEventListener('unload', () => {
-  chrome.storage.local.unset('settingsTabId')
-})
 
 chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
   const { message } = response
@@ -50,17 +46,8 @@ async function sendMessage() {
 
 const creator = getChannel()
 if (creator) {
-  // const creatorEl = author.querySelector('.media-heading-name')
-  // const creator = creatorEl?.innerHTML.trim()
-  console.log(`author: ${creator.author}`)
-  console.log(`channel: ${creator.channel}`)
-  // sendMessage()
   displayBar()
 }
-// const author = document.querySelector('[rel="author"]')
-// console.log(author)
-// if (author) {
-// }
 
 async function addToSchedule() {
   const { author, channel } = getChannel()
