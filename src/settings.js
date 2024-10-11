@@ -1,3 +1,11 @@
+class MessagedTab {
+  constructor(message) {
+    super()
+    this.message = message
+    //
+  }
+}
+
 function log(text) {
   chrome.notifications.create({
     iconUrl: chrome.runtime.getURL('icon1.jpg'),
@@ -9,6 +17,7 @@ function log(text) {
 
 chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
   const { message } = response
+  log(`received message in settings: ${JSON.stringify(message)}`)
   // if (message == "hello") {
   //     chrome.tabs.create({ url: "https://www.rumble.com/" })
   // }

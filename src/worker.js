@@ -18,7 +18,7 @@ chrome.runtime.onInstalled.addListener(async ({reason}) => {
       id: 12345,
       name: 'InfoWars',
       creator: 'InfoWars',
-      start: new Date()
+      start: new Date().valueOf()
     }]
   })
   // if (!schedule) {
@@ -60,7 +60,7 @@ chrome.action.onClicked.addListener(async () => {
 
   //   }
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-    const response = await chrome.tabs.sendMessage(tab.id, { message: "show-bar" });
+    const response = await chrome.tabs.sendMessage(tab.id, { message: { type: "show-bar" } });
     return
   }
 
@@ -72,11 +72,23 @@ chrome.action.onClicked.addListener(async () => {
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
+    const {message} = request
     console.log(sender.tab ?
                 "from a content script:" + sender.tab.url :
                 "from the extension");
-    if (request.message === "hello")
-      sendResponse({farewell: "goodbye"});
+    if (message.type == 'add-to-schedule') {
+      const data = JSON.stringify(message)
+      log(data)
+      // log(`add ${message.channel} to schedule`)
+
+      chrome.tabs.create({ url: 'settings.html' }, async (tab) => {
+        const response = await chrome.tabs.sendMessage(tab.id, message)
+        // log(`tab created ${tab.id}`)
+      })
+    
+    }
+    // if (request.message.type === "hello")
+    //   sendResponse({farewell: "goodbye"});
   }
 );
 
@@ -91,25 +103,7 @@ chrome.runtime.onMessage.addListener(
 
 chrome.action.iconUrl = chrome.runtime.getURL('icon.svg')
 
-// chrome.runtime.onInstalled.addListener(({reason}) => {
-//   if (reason === 'install') {
-//     chrome.tabs.create({
-//       url: "onboarding.html"
-//     });
-//   }
-// });
-
-log('background script loaded')
-
-// const options = await chrome.storage.sync.get('options')
-// console.log('options', options)
-
-// chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
-//   const { message } = response
-//   if (message == "hello") {
-//       chrome.tabs.create({ url: "https://www.rumble.com/" })
-//   }
-// })
+// log('background script loaded')
 
 async function setBadgeText(text) {
   await chrome.action.setBadgeText({ text })
@@ -167,7 +161,7 @@ chrome.tabs.onUpdated.addListener(() => {
 chrome.webNavigation.onDOMContentLoaded.addListener(async ({ tabId, url }) => {
   const { hostname } = new URL(url)
   if (!/rumble\.com/.test(hostname)) return
-  log('on Rumble')
+  // log('on Rumble')
   // if (url.pathname.slice(0, 3) === '/c/') {
   //   setBadgeText('user')
   //   // document.querySelector('[rel="author"]')
