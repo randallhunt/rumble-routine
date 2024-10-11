@@ -1,4 +1,4 @@
-class SettingsTabManager {
+class ManagedTab {
   constructor(url, storageName = 'settingsTabId') {
     this.url = url
     this.setting = storageName

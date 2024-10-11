@@ -1,6 +1,7 @@
-importScripts('./settings-tab-manager.js')
+importScripts('./managed-tab.js')
 
-const settingsManager = new SettingsTabManager('./settings.html')
+const settingsManager = new ManagedTab('./settings.html')
+// const currentStream = new ManagedTab('https://rumble.com/c/InfoWars')
 
 function log(text) {
   chrome.notifications.create({
