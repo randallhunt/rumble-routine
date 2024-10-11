@@ -4,15 +4,22 @@
   "description": "Rumble scheduler",
   "version": "1.0",
   "action": {
-    "default_popup": "popup.html",
-    "default_icon": "icon.svg"
+    "default_icon": "icon1.jpg"
   },
   "background": {
     "service_worker": "worker.js",
     "type": "module"
   },
+  "content_scripts": [
+    {
+      "matches": [ "https://www.rumble.com/*" ],
+      "js": [ "content.js" ]
+    }
+  ],
   "permissions": [
+    "activeTab",
     "alarms",
+    "notifications",
     "storage",
     "tabs"
   ],

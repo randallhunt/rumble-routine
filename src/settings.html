@@ -7,11 +7,22 @@
   </head>
 
   <body>
-    <script type="./script.js"></script>
     <header>
       <h1><img src="default_icon.svg" width="32" height="32" /> Rumble Routine</h1>
     </header>
-    <div class="item">Schedule this show</div>
-    <div class="item">Manage schedule</div>
+    <!-- <p>tab number <span id="tabNum" /></p> -->
+    <div id="currentSource"></div>
+    <table id="scheduleTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Creator</th>
+          <th>Start</th>
+          <th></th>
+        </tr>  
+      </thead>
+      <tbody id="scheduleBody"></tbody>
+    </table>
   </body>
+  <script src="settings.js"></script>
 </html>
