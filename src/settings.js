@@ -7,6 +7,14 @@ function log(text) {
   })  
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+  chrome.runtime.sendMessage({ message: { type: 'settings-tab-ready' }})
+})
+
+window.addEventListener('unload', () => {
+  chrome.storage.local.unset('settingsTabId')
+})
+
 chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
   const { message } = response
   log(`received message in settings: ${JSON.stringify(message)}`)
