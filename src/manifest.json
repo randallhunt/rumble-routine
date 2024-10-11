@@ -5,9 +5,9 @@
   "version": "1.0",
   "action": {},
   "background": {
-    "service_worker": "worker.js",
-    "type": "module"
+    "service_worker": "worker.js"
   },
+  "minimum_chrome_version": "92",
   "permissions": [
     "activeTab",
     "alarms",
