@@ -7,19 +7,20 @@ function log(text) {
   chrome.notifications.create({
     iconUrl: chrome.runtime.getURL('icon1.jpg'),
     message: text,
-    title: "Rumble Routine",
-    type: "basic"
-  })  
+    title: 'Rumble Routine',
+    type: 'basic'
+  })
 }
 
-chrome.runtime.onInstalled.addListener(async ({reason}) => {
+chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   let { options } = await chrome.storage.sync.get({ options: {} })
   if (!options) {
     options = {}
     await chrome.storage.sync.set({ options })
   }
 
-  let { schedule } = await chrome.storage.sync.get({ schedule: [{
+  const { schedule } = await chrome.storage.sync.get({
+    schedule: [{
       id: 12345,
       name: 'InfoWars',
       channel: 'InfoWars',
@@ -30,7 +31,7 @@ chrome.runtime.onInstalled.addListener(async ({reason}) => {
 
   await chrome.storage.sync.set({ schedule })
 
-  if (reason == 'install') {
+  if (reason === 'install') {
     // add options object, maybe?
   }
   // if (reason == 'install' || 'update' )
@@ -43,23 +44,23 @@ chrome.action.onClicked.addListener(async () => {
   //   setBadgeText('')
   //   return
   // }
-  const {hostname, pathname} = new URL(tab.url)
+  const { hostname, pathname } = new URL(tab.url)
 
   const rumble = /rumble\.com/.test(hostname)
   // log(rumble ? 'true' : 'false')
   if (rumble) {
-  //   if (
-  //     pathname.slice(0, 3) === '/c/' ||
-  //     pathname.slice(0, 2) === '/v'
-  //   ) {
-  //     const author = document.querySelector('[rel="author"]')
-  //     const uid = author.href.split('/').pop()
-  //     // log(uid)
-  //     // document.querySelector('.thumbnail__thumb--live')
+    //   if (
+    //     pathname.slice(0, 3) === '/c/' ||
+    //     pathname.slice(0, 2) === '/v'
+    //   ) {
+    //     const author = document.querySelector('[rel="author"]')
+    //     const uid = author.href.split('/').pop()
+    //     // log(uid)
+    //     // document.querySelector('.thumbnail__thumb--live')
 
-  //   }
-    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-    const response = await chrome.tabs.sendMessage(tab.id, { message: { type: "show-bar" } });
+    //   }
+    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true })
+    const response = await chrome.tabs.sendMessage(tab.id, { message: { type: 'show-bar' } })
     return
   }
 
@@ -67,26 +68,22 @@ chrome.action.onClicked.addListener(async () => {
 })
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    const {message} = request
-    console.log(sender.tab ?
-                "from a content script:" + sender.tab.url :
-                "from the extension");
-    if (message.type == 'add-to-schedule') {
-      const data = JSON.stringify(message)
-      log(data)
-      // log(`add ${message.channel} to schedule`)
+  const { message } = request
+  console.log(sender.tab ? 'from a content script:' + sender.tab.url : 'from the extension')
+  if (message.type === 'add-to-schedule') {
+    const data = JSON.stringify(message)
+    log(data)
+    // log(`add ${message.channel} to schedule`)
 
-      settingsManager.openSettingsTab(message)
-      // chrome.tabs.create({ url: 'settings.html' }, async (tab) => {
-      //   const response = await chrome.tabs.sendMessage(tab.id, message)
-      //   // log(`tab created ${tab.id}`)
-      // })
-    
-    }
-    // if (request.message.type === "hello")
-    //   sendResponse({farewell: "goodbye"});
+    settingsManager.openSettingsTab(message)
+    // chrome.tabs.create({ url: 'settings.html' }, async (tab) => {
+    //   const response = await chrome.tabs.sendMessage(tab.id, message)
+    //   // log(`tab created ${tab.id}`)
+    // })
   }
-);
+  // if (request.message.type === "hello")
+  //   sendResponse({farewell: "goodbye"});
+})
 
 // await chrome.storage.sync.set({ options })
 // let options = {}
@@ -101,11 +98,11 @@ chrome.action.iconUrl = chrome.runtime.getURL('icon.svg')
 
 // log('background script loaded')
 
-async function setBadgeText(text) {
+async function setBadgeText (text) {
   await chrome.action.setBadgeText({ text })
 }
 
-async function updateAction() {
+async function updateAction () {
   const tab = await getCurrentTab()
   if (!tab?.url) {
     setBadgeText('')
@@ -126,15 +123,15 @@ async function updateAction() {
     return
   }
   // if (!rumble)
-    setBadgeText('')
+  setBadgeText('')
   // setBadgeText(rumble)
 }
 
-async function getCurrentTab() {
-  let queryOptions = { active: true, lastFocusedWindow: true };
+async function getCurrentTab () {
+  const queryOptions = { active: true, lastFocusedWindow: true }
   // `tab` will either be a `tabs.Tab` instance or `undefined`.
-  let [tab] = await chrome.tabs.query(queryOptions);
-  return tab;
+  const [tab] = await chrome.tabs.query(queryOptions)
+  return tab
 }
 
 chrome.tabs.onActivated.addListener((tabInfo) => {
@@ -173,7 +170,7 @@ chrome.webNavigation.onDOMContentLoaded.addListener(async ({ tabId, url }) => {
   // const { options } = await chrome.storage.local.get('options');
   chrome.scripting.executeScript({
     target: { tabId },
-    files: ['content.js'],
+    files: ['content.js']
     // ...options
-  });
-});
+  })
+})

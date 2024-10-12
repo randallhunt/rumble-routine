@@ -1,4 +1,4 @@
-function getChannel() {
+function getChannel () {
   const channelEl = document.querySelector('[rel="author"]')
   if (!channelEl) return null
   const channel = channelEl.href.split('/').pop()
@@ -13,12 +13,12 @@ function getChannel() {
 
 chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
   const { message } = response
-  if (message.type == 'show-bar') {
+  if (message.type === 'show-bar') {
     displayBar()
     return
   }
 
-  if (message.type == 'open-settings') {
+  if (message.type === 'open-settings') {
     return
   }
 
@@ -38,37 +38,39 @@ chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
   // }
 })
 
-async function sendMessage() {
-  // const response = await chrome.runtime.sendMessage({ message: { type: "hello" } });
-  // do something with response here, not outside the function
-  // console.log(response);
-}
+// async function sendMessage () {
+//   // const response = await chrome.runtime.sendMessage({ message: { type: "hello" } });
+//   // do something with response here, not outside the function
+//   // console.log(response);
+// }
 
 const creator = getChannel()
 if (creator) {
   displayBar()
 }
 
-async function addToSchedule() {
+async function addToSchedule () {
   const { author, channel } = getChannel()
-  const response = await chrome.runtime.sendMessage({ message: {
-    author,
-    channel,
-    type: 'add-to-schedule'
-  } });
+  const response = await chrome.runtime.sendMessage({
+    message: {
+      author,
+      channel,
+      type: 'add-to-schedule'
+    }
+  })
   closeBar()
 }
 
-function closeBar() {
-  let el = document.getElementById('rumbleroutine')
+function closeBar () {
+  const el = document.getElementById('rumbleroutine')
   if (el) el.parentElement.removeChild(el)
 }
 
-async function displayBar() {
+async function displayBar () {
   // let el = document.getElementById('rumbleroutine')
   // if (el) el.parentElement.removeChild(el)
   closeBar()
-  el = document.createElement('div')
+  const el = document.createElement('div')
   el.id = 'rumbleroutine'
 
   const div = document.createElement('div')

@@ -1,5 +1,5 @@
 class ManagedTab {
-  constructor(url, storageName = 'settingsTabId') {
+  constructor (url, storageName = 'settingsTabId') {
     this.url = url
     this.setting = storageName
     this.message = null
@@ -9,7 +9,7 @@ class ManagedTab {
     this.windowId = null
 
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      const {message} = request
+      const { message } = request
       if (message.type === 'settings-tab-ready') this.ready = true
     })
   }
@@ -25,8 +25,8 @@ class ManagedTab {
         this.waitForTab()
         return
       }
-      throw new Error("failed to open settings tab");
-    }, 50);
+      throw new Error('failed to open settings tab')
+    }, 50)
   }
 
   openSettingsTab = async (message = null) => {
@@ -45,17 +45,17 @@ class ManagedTab {
   }
 
   createTab = async () => {
-    const tab = await chrome.tabs.create({url: this.url})
-    await chrome.storage.local.set({[this.setting]: tab.id})
+    const tab = await chrome.tabs.create({ url: this.url })
+    await chrome.storage.local.set({ [this.setting]: tab.id })
     this.tabId = tab.id
     return tab
   }
 
   getOpenTab = async () => {
-    const {tabId} = await chrome.storage.local.get(this.setting)
+    const { tabId } = await chrome.storage.local.get(this.setting)
     if (!tabId) return null
     const tab = await chrome.tabs.get(tabId)
-    if (tab.url == this.url) {
+    if (tab.url === this.url) {
       chrome.tabs.highlight({ tabs: tab.id })
       this.tabId = tab.id
       return tab

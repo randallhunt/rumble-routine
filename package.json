@@ -4,11 +4,15 @@
   "description": "Rumble Routine",
   "main": "index.js",
   "scripts": {
+    "lint": "standard src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Randy Hunt",
   "license": "MIT",
   "devDependencies": {
     "standard": "^17.1.2"
+  },
+  "standard": {
+    "globals": ["chrome", "importScripts"]
   }
 }

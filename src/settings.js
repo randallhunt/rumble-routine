@@ -1,13 +1,13 @@
-function log(text) {
+function log (text) {
   chrome.notifications.create({
     iconUrl: chrome.runtime.getURL('icon1.jpg'),
     message: text,
-    title: "Rumble Routine",
-    type: "basic"
-  })  
+    title: 'Rumble Routine',
+    type: 'basic'
+  })
 }
 
-async function addCurrent() {
+async function addCurrent () {
   const name = document.getElementById('current-name').value
   const channel = document.getElementById('current-channel').value
   const start = document.getElementById('current-start').value
@@ -34,7 +34,7 @@ async function addCurrent() {
     start,
     days
   }
-  let {schedule} = await chrome.storage.sync.get({ schedule: [] })
+  const { schedule } = await chrome.storage.sync.get({ schedule: [] })
   schedule.push(newItem)
   await chrome.storage.sync.set({ schedule })
   const scheduleTable = document.getElementById('scheduleTable')
@@ -42,20 +42,20 @@ async function addCurrent() {
   document.getElementById('current-source').reset()
 }
 
-async function deleteClick(e) {
+async function deleteClick (e) {
   e.stopPropagation()
   e.preventDefault()
   const t = e.target
   const row = t.parentElement.parentElement
-  const id = parseInt(row.dataset['id'])
+  const id = parseInt(row.dataset.id)
   row.parentElement.removeChild(row)
 
-  let {schedule} = await chrome.storage.sync.get({ schedule: [] })
+  let { schedule } = await chrome.storage.sync.get({ schedule: [] })
   schedule = schedule.filter((item) => item.id !== id)
   await chrome.storage.sync.set({ schedule })
 }
 
-function makeRow(item) {
+function makeRow (item) {
   const row = document.createElement('div')
   row.className = 'schedule-row'
   row.dataset.id = item.id
@@ -96,7 +96,7 @@ chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
   if (message.type === 'add-to-schedule') {
     const name = document.getElementById('current-name')
     name.value = message.author
-    
+
     const channel = document.getElementById('current-channel')
     channel.value = message.channel
 
@@ -112,9 +112,9 @@ window.addEventListener('unload', () => {
   chrome.storage.local.remove('settingsTabId')
 })
 
-document.addEventListener('DOMContentLoaded', async () => {  
-  let {schedule} = await chrome.storage.sync.get({ schedule: [] })
-  
+document.addEventListener('DOMContentLoaded', async () => {
+  const { schedule } = await chrome.storage.sync.get({ schedule: [] })
+
   const els = schedule.map(makeRow)
   const scheduleTable = document.getElementById('scheduleTable')
   scheduleTable.innerHTML = `
@@ -128,5 +128,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   `
   els.forEach(row => scheduleTable.appendChild(row))
 
-  chrome.runtime.sendMessage({ message: { type: 'settings-tab-ready' }})
-}, false);
+  chrome.runtime.sendMessage({ message: { type: 'settings-tab-ready' } })
+}, false)
