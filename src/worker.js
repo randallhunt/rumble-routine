@@ -1,6 +1,6 @@
-importScripts('./managed-tab.js')
+importScripts('./managed-tab.js', './utils.js')
 
-const settingsManager = new ManagedTab('./settings.html')
+const settingsManager = new ManagedTab('./settings/page.html')
 // const currentStream = new ManagedTab('https://rumble.com/c/InfoWars')
 
 function log (text) {
@@ -78,7 +78,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // log(`add ${message.channel} to schedule`)
 
     settingsManager.openSettingsTab(message)
-    // chrome.tabs.create({ url: 'settings.html' }, async (tab) => {
+    // chrome.tabs.create({ url: 'settings/page.html' }, async (tab) => {
     //   const response = await chrome.tabs.sendMessage(tab.id, message)
     //   // log(`tab created ${tab.id}`)
     // })
@@ -176,3 +176,11 @@ chrome.webNavigation.onDOMContentLoaded.addListener(async ({ tabId, url }) => {
     // ...options
   })
 })
+
+// keep awake
+
+// chrome.alarms.getAll((e) => {
+//   0 == e.length ? chrome.power.releaseKeepAwake() : chrome.power.requestKeepAwake("display");
+// });
+
+const WeeklyIntervalInMinutes = 10080 // 7*24*60

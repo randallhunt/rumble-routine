@@ -1,11 +1,4 @@
-function log (text) {
-  chrome.notifications.create({
-    iconUrl: chrome.runtime.getURL('icon1.jpg'),
-    message: text,
-    title: 'Rumble Routine',
-    type: 'basic'
-  })
-}
+
 
 async function addCurrent () {
   const name = document.getElementById('current-name').value
