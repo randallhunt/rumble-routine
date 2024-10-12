@@ -34,6 +34,8 @@ async function addCurrent () {
     start,
     days
   }
+  // log(`newitem: ${JSON.stringify(newItem)}`)
+
   const { schedule } = await chrome.storage.sync.get({ schedule: [] })
   schedule.push(newItem)
   await chrome.storage.sync.set({ schedule })
@@ -77,6 +79,7 @@ function makeRow (item) {
   daysCell.innerHTML = item.days.join(', ')
 
   const actionsCell = document.createElement('div')
+  actionsCell.className = 'schedule-actions'
   const a = document.createElement('a')
   a.href = '#'
   a.innerHTML = 'X'
@@ -86,6 +89,7 @@ function makeRow (item) {
   row.appendChild(nameCell)
   row.appendChild(creatorCell)
   row.appendChild(startCell)
+  row.appendChild(daysCell)
   row.appendChild(actionsCell)
   return row
 }
@@ -121,7 +125,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   <div class="schedule-row">
     <div class="heading schedule-name">Name</div>
     <div class="heading schedule-creator">Creator</div>
-    <div class="heading schedule-time">Time</div>
+    <div class="heading schedule-start">Time</div>
     <div class="heading schedule-days">Days</div>
     <div class="heading schedule-actions">&nbsp;</div>
   </div>

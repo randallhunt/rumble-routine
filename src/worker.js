@@ -3,7 +3,7 @@ importScripts('./managed-tab.js')
 const settingsManager = new ManagedTab('./settings.html')
 // const currentStream = new ManagedTab('https://rumble.com/c/InfoWars')
 
-function log(text) {
+function log (text) {
   chrome.notifications.create({
     iconUrl: chrome.runtime.getURL('icon1.jpg'),
     message: text,
@@ -14,6 +14,7 @@ function log(text) {
 
 chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   let { options } = await chrome.storage.sync.get({ options: {} })
+  // log(`options: ${JSON.stringify(options)}`)
   if (!options) {
     options = {}
     await chrome.storage.sync.set({ options })
@@ -28,6 +29,7 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
       days: ['mon', 'tue', 'wed', 'thu', 'fri']
     }]
   })
+  log(`schedule: ${JSON.stringify(schedule)}`)
 
   await chrome.storage.sync.set({ schedule })
 
@@ -69,10 +71,10 @@ chrome.action.onClicked.addListener(async () => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const { message } = request
-  console.log(sender.tab ? 'from a content script:' + sender.tab.url : 'from the extension')
+  // console.log(sender.tab ? 'from a content script:' + sender.tab.url : 'from the extension')
   if (message.type === 'add-to-schedule') {
     const data = JSON.stringify(message)
-    log(data)
+    // log(data)
     // log(`add ${message.channel} to schedule`)
 
     settingsManager.openSettingsTab(message)
