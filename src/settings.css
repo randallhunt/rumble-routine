@@ -1,5 +1,6 @@
 html, body {
     background: lightgray;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
 }
@@ -52,6 +53,21 @@ body {
 .schedule-actions {
   max-width: 100px;
   width: 10%;
+}
+
+.schedule-actions a {
+  text-decoration: none;
+}
+
+.trash-icon {
+  background-color: #fff;
+  background-image: url(./icon-delete.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: inline-block;
+  height: 20px;
+  width: 20px;
 }
 
 /* table#scheduleTable th,

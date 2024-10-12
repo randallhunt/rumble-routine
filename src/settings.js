@@ -48,7 +48,7 @@ async function deleteClick (e) {
   e.stopPropagation()
   e.preventDefault()
   const t = e.target
-  const row = t.parentElement.parentElement
+  const row = t.parentElement.parentElement.parentElement
   const id = parseInt(row.dataset.id)
   row.parentElement.removeChild(row)
 
@@ -82,15 +82,15 @@ function makeRow (item) {
   actionsCell.className = 'schedule-actions'
   const a = document.createElement('a')
   a.href = '#'
-  a.innerHTML = 'X'
+  a.innerHTML = '<i class="trash-icon"></i>'
   a.addEventListener('click', deleteClick)
   actionsCell.appendChild(a)
 
+  row.appendChild(actionsCell)
   row.appendChild(nameCell)
   row.appendChild(creatorCell)
   row.appendChild(startCell)
   row.appendChild(daysCell)
-  row.appendChild(actionsCell)
   return row
 }
 
@@ -123,11 +123,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const scheduleTable = document.getElementById('scheduleTable')
   scheduleTable.innerHTML = `
   <div class="schedule-row">
+    <div class="heading schedule-actions"></div>
     <div class="heading schedule-name">Name</div>
     <div class="heading schedule-creator">Creator</div>
     <div class="heading schedule-start">Time</div>
     <div class="heading schedule-days">Days</div>
-    <div class="heading schedule-actions">&nbsp;</div>
   </div>
   `
   els.forEach(row => scheduleTable.appendChild(row))
