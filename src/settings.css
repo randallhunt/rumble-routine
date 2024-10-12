@@ -39,9 +39,14 @@ body {
   width: 25%;
 }
 
-.schedule-schedule {
-  flex-grow: 2;
-  width: 40%;
+.schedule-start {
+  flex-grow: 1;
+  width: 10%;
+}
+
+.schedule-days {
+  flex-grow: 1;
+  width: 30%;
 }
 
 .schedule-actions {
@@ -67,3 +72,57 @@ table#scheduleTable td {
   background-color: white;
   color: black;
 } */
+.current-source {
+  align-content: center;
+  background-color: #85c742;
+  border: solid 1px #000;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  /* margin: 1em; */
+  padding: 1em;
+}
+
+.current-author,
+.current-schedule {
+  align-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  max-width: 45%;
+}
+
+.current-source label {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: bold;
+  width: 80px;
+}
+
+.current-source input {
+  font-size: 14px;
+  letter-spacing: 0.3;
+}
+
+.current-source button {
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.input-row {
+  display: flex;
+  flex-direction: row;
+  margin: 5px;
+}
+
+.input-row > * {
+  text-align: left;
+}
+.input-row > label {
+  min-width: 80px;
+  text-align: right;
+}
+
+.input-day {
+  white-space: nowrap;
+}

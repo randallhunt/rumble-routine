@@ -22,18 +22,12 @@ chrome.runtime.onInstalled.addListener(async ({reason}) => {
   let { schedule } = await chrome.storage.sync.get({ schedule: [{
       id: 12345,
       name: 'InfoWars',
-      creator: 'InfoWars',
-      start: new Date().valueOf()
+      channel: 'InfoWars',
+      start: '12:00',
+      days: ['mon', 'tue', 'wed', 'thu', 'fri']
     }]
   })
-  // if (!schedule) {
-  //   options.schedule = [{
-  //     id: 12345,
-  //     name: 'InfoWars',
-  //     creator: 'InfoWars',
-  //     start: new Date()
-  //   }]
-  // }
+
   await chrome.storage.sync.set({ schedule })
 
   if (reason == 'install') {

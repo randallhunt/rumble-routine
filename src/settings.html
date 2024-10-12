@@ -12,12 +12,34 @@
       <h1><img src="icon.svg" width="32" height="32" /> Rumble Routine</h1>
     </header>
     <!-- <p>tab number <span id="tabNum" /></p> -->
-    <div id="currentSource"></div>
+    <form id="current-source" class="current-source">
+      <div class="current-author">
+        <div class="input-row"><label>Name:</label> <input id="current-name" type="text" value="" /></div>
+        <div class="input-row"><label>Channel:</label> <input id="current-channel" type="text" value="" /></div>
+      </div>
+      <div class="current-schedule">
+        <div class="input-row"><label>Time:</label> <input id="current-start" type="text" value="" /></div>
+        <div class="input-row"><label>Days:</label>
+          <div>
+            <span class="input-day"><input type="checkbox" id="current-sun" value="sun" /> <label for="current-sun">Sunday</label></span>
+            <span class="input-day"><input type="checkbox" id="current-mon" value="mon" /> <label for="current-mon">Monday</label></span>
+            <span class="input-day"><input type="checkbox" id="current-tue" value="tue" /> <label for="current-tue">Tuesday</label></span>
+            <span class="input-day"><input type="checkbox" id="current-wed" value="wed" /> <label for="current-wed">Wednesday</label></span>
+            <span class="input-day"><input type="checkbox" id="current-thu" value="thu" /> <label for="current-thu">Thursday</label></span>
+            <span class="input-day"><input type="checkbox" id="current-fri" value="fri" /> <label for="current-fri">Friday</label></span>
+            <span class="input-day"><input type="checkbox" id="current-sat" value="sat" /> <label for="current-sat">Saturday</label></span>
+          </div>
+        </div>
+        <div><button id="addbtn">Add to Schedule</button></div>
+      </div>
+    </form>
+
     <div id="scheduleTable">
       <div class="schedule-row">
         <div class="schedule-name heading">Name</div>
         <div class="schedule-creator heading">Creator</div>
-        <div class="schedule-schedule heading">Schedule</div>
+        <div class="schedule-time heading">Time</div>
+        <div class="schedule-days heading">Days</div>
         <div class="schedule-actions heading">&nbsp;</div>
       </div>
     </div>
