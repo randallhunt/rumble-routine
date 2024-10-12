@@ -1,0 +1,10 @@
+{
+  "editor.codeActionsOnSave": {
+
+  },
+  "eslint.validate": [
+    "javascript"
+  ],
+  "standard.enable": false,
+  "eslint.enable": true
+}
