@@ -1,40 +1,60 @@
-
+const dayAbbr = d => d.toLowerCase().substring(0, 3)
+const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const days = dayNames.map(dayAbbr)
 
 async function addCurrent () {
+  const { schedule } = await chrome.storage.sync.get({ 
+    schedule: {
+      sun: [],
+      mon: [],
+      tue: [],
+      wed: [],
+      thu: [],
+      fri: [],
+      sat: []
+    }
+  })
+
   const name = document.getElementById('current-name').value
   const channel = document.getElementById('current-channel').value
   const start = document.getElementById('current-start').value
-
-  const sun = document.getElementById('current-sun')
-  const mon = document.getElementById('current-mon')
-  const tue = document.getElementById('current-tue')
-  const wed = document.getElementById('current-wed')
-  const thu = document.getElementById('current-thu')
-  const fri = document.getElementById('current-fri')
-  const sat = document.getElementById('current-sat')
-
-  const days = [sun, mon, tue, wed, thu, fri, sat].reduce((prev, curr) => {
-    if (curr.checked) return [...prev, curr.value]
-    else return [...prev]
-  }, [])
-
-  // log(`days: ${days}`)
 
   const newItem = {
     id: (new Date()).valueOf(),
     name,
     channel,
     start,
-    days
   }
-  // log(`newitem: ${JSON.stringify(newItem)}`)
 
-  const { schedule } = await chrome.storage.sync.get({ schedule: [] })
-  schedule.push(newItem)
+  days.forEach((day) => {
+    let sked = [...schedule[day]]
+
+    // find that item
+    const idx = sked.find(item => {
+      return (item.channel == channel && item.start == start)
+    })
+
+    const input = document.getElementById(`current-${day}`)
+    if (input.checked) {
+      if (idx > -1) {
+        sked[idx] = newItem
+      } else {
+        sked.push(newItem)
+      }
+    } else {
+      if (idx > -1) {
+        sked = schedule[day].filter((_item, index) => index != idx)
+      }
+    }
+    schedule[day] = sked
+  })
+
+  const days = [sun, mon, tue, wed, thu, fri, sat].reduce((prev, curr) => {
+    if (curr.checked) return [...prev, curr.value]
+    else return [...prev]
+  }, [])
+
   await chrome.storage.sync.set({ schedule })
-  const scheduleTable = document.getElementById('scheduleTable')
-  scheduleTable.appendChild(makeRow(newItem))
-  document.getElementById('current-source').reset()
 }
 
 async function deleteClick (e) {
@@ -67,10 +87,6 @@ function makeRow (item) {
   startCell.className = 'schedule-start'
   startCell.innerHTML = item.start
 
-  const daysCell = document.createElement('div')
-  daysCell.className = 'schedule-days'
-  daysCell.innerHTML = item.days.join(', ')
-
   const actionsCell = document.createElement('div')
   actionsCell.className = 'schedule-actions'
   const a = document.createElement('a')
@@ -83,8 +99,30 @@ function makeRow (item) {
   row.appendChild(nameCell)
   row.appendChild(channelCell)
   row.appendChild(startCell)
-  row.appendChild(daysCell)
   return row
+}
+
+async function redraw() {
+  const { schedule } = await chrome.storage.sync.get({ 
+    schedule: {
+      sun: [],
+      mon: [],
+      tue: [],
+      wed: [],
+      thu: [],
+      fri: [],
+      sat: []
+    }
+  })
+
+  days.forEach((day, i) => {
+    const table = document.getElementById(`${day}-schedule`)
+    table.innerHTML = `<h2>${dayNames[i]}</h2>`
+    const sked = schedule[day]
+    sked.forEach(item => {
+      table.appendChild(makeRow(item))
+    })
+  })
 }
 
 chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
@@ -110,20 +148,7 @@ window.addEventListener('unload', () => {
 })
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const { schedule } = await chrome.storage.sync.get({ schedule: [] })
-
-  const els = schedule.map(makeRow)
-  const scheduleTable = document.getElementById('scheduleTable')
-  scheduleTable.innerHTML = `
-  <div class="schedule-row">
-    <div class="heading schedule-actions"></div>
-    <div class="heading schedule-name">Name</div>
-    <div class="heading schedule-channel">Channel</div>
-    <div class="heading schedule-start">Time</div>
-    <div class="heading schedule-days">Days</div>
-  </div>
-  `
-  els.forEach(row => scheduleTable.appendChild(row))
+  await redraw()
 
   chrome.runtime.sendMessage({ message: { type: 'settings-tab-ready' } })
 }, false)

@@ -9,14 +9,15 @@ body {
   padding: 10px;
 }
 
-#scheduleTable {
+.schedule-table {
   background-color: #fff;
   border: solid 1px #000;
   display: flex;
   flex-direction: column;
+  margin: 1em 0;
 }
 
-#scheduleTable .heading {
+.schedule-table .heading {
   font-weight: bold;
 }
 
