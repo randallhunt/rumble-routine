@@ -1,4 +1,4 @@
-const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 function getChannel () {
   const channelEl = document.querySelector('[rel="author"]')
@@ -64,74 +64,45 @@ async function addToSchedule () {
 }
 
 function closeBar () {
-  const el = document.getElementById('rumbleroutine')
+  const el = document.getElementById('rumble-routine-bar')
   if (el) el.parentElement.removeChild(el)
 }
 
 async function displayBar () {
-  // let el = document.getElementById('rumbleroutine')
+  // let el = document.getElementById('rumble-routine-bar')
   // if (el) el.parentElement.removeChild(el)
   closeBar()
   const el = document.createElement('div')
-  el.id = 'rumbleroutine'
+  el.id = 'rumble-routine-bar'
 
   const div = document.createElement('div')
-  div.innerHTML = 'This program is not in your schedule'
-  div.style.textShadow = '1px 1px 2px white'
+  // div.innerHTML = 'This program is not in your schedule'
+  // div.style.textShadow = '1px 1px 2px white'
   el.appendChild(div)
+
+  const sked = document.createElement('div')
+  sked.className = 'inline-schedule'
+  days.forEach(day => {
+    const key = day.toLowerCase()
+    const span = document.createElement('span')
+    span.className = 'rumbleroutine-dayinput'
+    span.innerHTML = `<input type="checkbox" id="rumbleroutine-${key}" value="${key}" /> <label for="rumbleroutine-${key}">${day}</label>`
+    sked.appendChild(span)
+  })
+  div.appendChild(sked)
 
   const button = document.createElement('button')
   button.innerHTML = 'Add It'
   button.className = 'btn btn-green btn-sm media-subscribe'
   button.addEventListener('click', addToSchedule)
-  // button.style.backgroundColor = '#85c742'
-  // button.style.borderRadius = '4px'
-  button.style.display = 'inline'
-  button.style.margin = '0 5px'
-  button.style.whiteSpace = 'no-wrap'
   div.appendChild(button)
 
-  const sked = document.createElement('div')
-  days.forEach(day => {
-    const span = document.createElement('span')
-    span.innerHTML = `<label><input type="checkbox" id="rumbleroutine-${day}" value="${day}" /> ${day}</label>`
-    span.display = 'inline-block'
-    span.style.margin = '4px 0'
-    sked.appendChild(span)
-  })
-  div.appendChild(sked)
-
-  // el.style = {
-  //   background: 'linear-gradient(0.25turn, rgb(81,184,89), rgb(190,232,193), rgb(81,184,89))',
-  //   boxSizing: 'border-box',
-  //   color: '#000'
-  // }
-  el.style.background = 'linear-gradient(0.25turn, rgb(81,184,89), rgb(190,232,193), rgb(81,184,89))'
-  el.style.boxSizing = 'border-box'
-  el.style.color = '#000'
-  el.style.fontSize = '16px'
-  el.style.margin = '0'
-  el.style.padding = '.6em 1em'
-  el.style.position = 'fixed'
-  el.style.textAlign = 'center'
-  el.style.top = '0px'
-  el.style.width = '100vw'
-  el.style.zIndex = 10000
-
   const close = document.createElement('a')
+  close.className = 'rumbleroutine-closebutton'
   close.href = '#'
   close.innerHTML = 'X'
   close.addEventListener('click', closeBar)
-  close.style.backgroundColor = '#fff'
-  close.style.border = 'solid 1px #000'
-  close.style.display = 'inline-block'
-  close.style.fontWeight = 'bold'
-  close.style.lineHeight = '20px'
-  close.style.position = 'absolute'
-  close.style.right = '5px'
-  close.style.top = '5px'
-  close.style.width = '20px'
-  el.appendChild(close)
 
+  el.appendChild(close)
   document.body.appendChild(el)
 }

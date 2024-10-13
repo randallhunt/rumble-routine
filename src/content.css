@@ -1,13 +1,43 @@
 #rumble-routine-bar {
-    background: linear-gradient(0.25turn, rgb(81,184,89), rgb(190,232,193), rgb(81,184,89));
-    box-sizing: border-box;
-    color: #000;
-    font-size: 16px;
-    margin: 0;
-    padding: .6em 1em;
-    position: fixed;
-    text-align: center;
-    top: 0px;
-    width: 100vw;
-    z-index: 10000;
+  background: linear-gradient(0.25turn, rgb(81,184,89), rgb(190,232,193), rgb(81,184,89));
+  box-sizing: border-box;
+  color: #000;
+  font-size: 16px;
+  margin: 0;
+  padding: .6em 1em;
+  position: fixed;
+  text-align: center;
+  top: 0px;
+  width: 100vw;
+  z-index: 10000;
+}
+
+#rumble-routine-bar .rumbleroutine-dayinput {
+  display: inline-block;
+  margin: 0 4px;
+}
+
+#rumble-routine-bar .rumbleroutine-closebutton {
+  background-color: #fff;
+  border: solid 1px #000;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 20px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 20px;
+}
+
+#rumble-routine-bar button.btn-green {
+  /* background-color: #85c742; */
+  /* border-radius: 4px; */
+  display: inline;
+  margin: 0 5px;
+  white-space: no-wrap;
+  
+}
+
+#rumble-routine-bar .inline-schedule {
+  display: inline-block;
 }
