@@ -1,4 +1,7 @@
-const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+// const dayAbbr = d => d.toLowerCase().substring(0, 3)
+const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+// const days = dayNames.map(dayAbbr)
+// const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 // get channel info
 function RubmleRoutineGetChannel () {
@@ -17,33 +20,51 @@ function RubmleRoutineGetChannel () {
 // add to schedule
 async function RubmleRoutineAddToSchedule () {
   const { author, channel } = RubmleRoutineGetChannel()
-  // const response = await chrome.runtime.sendMessage({
-  //   message: {
-  //     author,
-  //     channel,
-  //     type: 'add-to-schedule'
-  //   }
-  // })
-  const hours = document.getElementById('rumbleroutine-hours')
-  const minutes = document.getElementById('rumbleroutine-minutes')
+  const hours = document.getElementById('rumbleroutine-hours').value
+  const minutes = document.getElementById('rumbleroutine-minutes').value
   const start = `${hours}:${minutes}`
   const { schedule } = await chrome.storage.sync.get({ 
     schedule: { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] }
   })
   let confirmed = true
-  days.forEach(d => {
-    const day = d.toLowerCase()
-    if (!document.getElementById(`rumbleroutine-${day}`).checked) return
-    console.log('day', day)
+  const newSchedule = { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] }
+  dayNames.forEach(dayName => {
+    const day = dayName.toLowerCase().substring(0, 3)
+    let items = schedule[day]
+    if (!document.getElementById(`rumbleroutine-${day}`).checked) {
+      newSchedule[day] = items.filter(item => item.start !== start && item.channel !== channel)
+      return
+    }
     schedule[day].forEach(item => {
-      console.log('item.start', item.start)
       if (item.start == start && item.channel != channel) {
-        alert(`You already have ${channel} scheduled for ${day} at that time. Replace it?`)
+        if (!confirm(`You already have ${item.channel} scheduled for ${dayName} at that time. Replace it?`)) {
+          confirmed = false
+          return
+        }
+        items.filter(item => item.start !== start)
       }
+      items.push({
+        id: new Date().valueOf(),
+        author,
+        channel,
+        start
+      })
+      newSchedule[day] = items
     })
+    console.log('confirmed: ', confirmed)
+    if (confirmed) {
+      console.log(newSchedule)
+      chrome.storage.sync.set({ schedule: newSchedule })
+    }
   })
-  // const existing = schedule.
   RubmleRoutineCloseBar()
+  const response = await chrome.runtime.sendMessage({
+    message: {
+      author,
+      channel,
+      type: 'add-to-schedule'
+    }
+  })
 }
 
 // close the bar
@@ -90,11 +111,12 @@ async function RubmleRoutineDisplayBar () {
 
   const sked = document.createElement('div')
   sked.className = 'inline-schedule'
-  days.forEach(day => {
-    const key = day.toLowerCase()
+  dayNames.forEach(day => {
+    const name = day.substring(0, 3)
+    const key = name.toLowerCase()
     const span = document.createElement('span')
     span.className = 'rumbleroutine-dayinput'
-    span.innerHTML = `<input type="checkbox" id="rumbleroutine-${key}" value="${key}" /> <label for="rumbleroutine-${key}">${day}</label>`
+    span.innerHTML = `<input type="checkbox" id="rumbleroutine-${key}" value="${key}" /> <label for="rumbleroutine-${key}">${name}</label>`
     sked.appendChild(span)
   })
   div.appendChild(sked)
@@ -114,7 +136,7 @@ async function RubmleRoutineDisplayBar () {
   el.appendChild(close)
   document.body.appendChild(el)
 
-  const dd = days[dt.getDay()].toLowerCase()
+  const dd = dayNames[dt.getDay()].toLowerCase().substring(0, 3)
   document.getElementById(`rumbleroutine-${dd}`).checked = true
 }
 
@@ -122,7 +144,7 @@ async function RubmleRoutineDisplayBar () {
 chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
   const { message } = response
   if (message.type === 'show-bar') {
-    RubmleRoutineisplayBar()
+    RubmleRoutineDisplayBar()
     return
   }
 
