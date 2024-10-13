@@ -1,3 +1,5 @@
+const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+
 function getChannel () {
   const channelEl = document.querySelector('[rel="author"]')
   if (!channelEl) return null
@@ -89,11 +91,25 @@ async function displayBar () {
   button.style.whiteSpace = 'no-wrap'
   div.appendChild(button)
 
+  const sked = document.createElement('div')
+  days.forEach(day => {
+    const span = document.createElement('span')
+    span.innerHTML = `<label><input type="checkbox" id="rumbleroutine-${day}" value="${day}" /> ${day}</label>`
+    span.display = 'inline-block'
+    span.style.margin = '4px 0'
+    sked.appendChild(span)
+  })
+  div.appendChild(sked)
+
+  // el.style = {
+  //   background: 'linear-gradient(0.25turn, rgb(81,184,89), rgb(190,232,193), rgb(81,184,89))',
+  //   boxSizing: 'border-box',
+  //   color: '#000'
+  // }
   el.style.background = 'linear-gradient(0.25turn, rgb(81,184,89), rgb(190,232,193), rgb(81,184,89))'
   el.style.boxSizing = 'border-box'
   el.style.color = '#000'
   el.style.fontSize = '16px'
-  // el.style.height = '40px'
   el.style.margin = '0'
   el.style.padding = '.6em 1em'
   el.style.position = 'fixed'

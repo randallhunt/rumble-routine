@@ -7,6 +7,11 @@
   "background": {
     "service_worker": "worker.js"
   },
+  "content_scripts": [{
+    "matches": ["https://rumble.com/*"],
+    "js": ["content.js"],
+    "css": ["content.css"]
+  }],
   "minimum_chrome_version": "92",
   "permissions": [
     "activeTab",
