@@ -1,5 +1,6 @@
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
+// get channel info
 function RubmleRoutineGetChannel () {
   const channelEl = document.querySelector('[rel="author"]')
   if (!channelEl) return null
@@ -13,35 +14,45 @@ function RubmleRoutineGetChannel () {
   }
 }
 
-function RumbleRoutineEstimateTime (t) {
-  const dt = new Date(t ?? undefined)
-  const h = dt.getHours()
-  const d = days[dt.getDay()]
-}
-// const creator = RubmleRoutineGetChannel()
-
-// if (creator.channel) {
-//   // alert('creator')
-//   RubmleRoutineDisplayBar()
-// }
-
+// add to schedule
 async function RubmleRoutineAddToSchedule () {
   const { author, channel } = RubmleRoutineGetChannel()
-  const response = await chrome.runtime.sendMessage({
-    message: {
-      author,
-      channel,
-      type: 'add-to-schedule'
-    }
+  // const response = await chrome.runtime.sendMessage({
+  //   message: {
+  //     author,
+  //     channel,
+  //     type: 'add-to-schedule'
+  //   }
+  // })
+  const hours = document.getElementById('rumbleroutine-hours')
+  const minutes = document.getElementById('rumbleroutine-minutes')
+  const start = `${hours}:${minutes}`
+  const { schedule } = await chrome.storage.sync.get({ 
+    schedule: { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] }
   })
-  closeBar()
+  let confirmed = true
+  days.forEach(d => {
+    const day = d.toLowerCase()
+    if (!document.getElementById(`rumbleroutine-${day}`).checked) return
+    console.log('day', day)
+    schedule[day].forEach(item => {
+      console.log('item.start', item.start)
+      if (item.start == start && item.channel != channel) {
+        alert(`You already have ${channel} scheduled for ${day} at that time. Replace it?`)
+      }
+    })
+  })
+  // const existing = schedule.
+  RubmleRoutineCloseBar()
 }
 
+// close the bar
 function RubmleRoutineCloseBar () {
   const el = document.getElementById('rumble-routine-bar')
   if (el) el.parentElement.removeChild(el)
 }
 
+// display the bar
 async function RubmleRoutineDisplayBar () {
   RubmleRoutineCloseBar()
   const dt = new Date()
@@ -53,6 +64,7 @@ async function RubmleRoutineDisplayBar () {
   el.appendChild(div)
 
   const hours = document.createElement('select')
+  hours.id = 'rumbleroutine-hours'
   Array.from({ length: 24 }, (_,i) => {
     const option = document.createElement('option')
     option.value = i
@@ -67,6 +79,7 @@ async function RubmleRoutineDisplayBar () {
   div.appendChild(colon)
 
   const minutes = document.createElement('select')
+  minutes.id = 'rumbleroutine-minutes'
   Array.prototype.forEach.call(['00', '30'], val => {
     const option = document.createElement('option')
     option.value = val
@@ -105,6 +118,7 @@ async function RubmleRoutineDisplayBar () {
   document.getElementById(`rumbleroutine-${dd}`).checked = true
 }
 
+// inter-process messaging
 chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
   const { message } = response
   if (message.type === 'show-bar') {
