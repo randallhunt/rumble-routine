@@ -62,11 +62,13 @@ async function deleteClick (e) {
   e.preventDefault()
   const t = e.target
   const row = t.parentElement.parentElement.parentElement
+  const table = row.parentElement
   const id = parseInt(row.dataset.id)
-  row.parentElement.removeChild(row)
+  const day = table.dataset.day
+  table.removeChild(row)
 
   let { schedule } = await chrome.storage.sync.get({ schedule: [] })
-  schedule = schedule.filter((item) => item.id !== id)
+  schedule[day] = schedule[day].filter((item) => item.id !== id)
   await chrome.storage.sync.set({ schedule })
 }
 
@@ -75,6 +77,10 @@ function makeRow (item) {
   row.className = 'schedule-row'
   row.dataset.id = item.id
 
+  const startCell = document.createElement('div')
+  startCell.className = 'schedule-start'
+  startCell.innerHTML = item.start
+
   const nameCell = document.createElement('div')
   nameCell.className = 'schedule-name'
   nameCell.innerHTML = item.name
@@ -82,10 +88,6 @@ function makeRow (item) {
   const channelCell = document.createElement('div')
   channelCell.className = 'schedule-channel'
   channelCell.innerHTML = item.channel
-
-  const startCell = document.createElement('div')
-  startCell.className = 'schedule-start'
-  startCell.innerHTML = item.start
 
   const actionsCell = document.createElement('div')
   actionsCell.className = 'schedule-actions'
@@ -96,23 +98,15 @@ function makeRow (item) {
   actionsCell.appendChild(a)
 
   row.appendChild(actionsCell)
+  row.appendChild(startCell)
   row.appendChild(nameCell)
   row.appendChild(channelCell)
-  row.appendChild(startCell)
   return row
 }
 
 async function redraw() {
   const { schedule } = await chrome.storage.sync.get({ 
-    schedule: {
-      sun: [],
-      mon: [],
-      tue: [],
-      wed: [],
-      thu: [],
-      fri: [],
-      sat: []
-    }
+    schedule: { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] }
   })
 
   days.forEach((day, i) => {

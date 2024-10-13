@@ -21,13 +21,40 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   }
 
   const { schedule } = await chrome.storage.sync.get({
-    schedule: [{
-      id: 12345,
-      name: 'InfoWars',
-      channel: 'InfoWars',
-      start: '12:00',
-      days: ['mon', 'tue', 'wed', 'thu', 'fri']
-    }]
+    schedule: {
+      sun: [],
+      mon: [{
+        id: 12345,
+        name: 'InfoWars',
+        channel: 'InfoWars',
+        start: '12:00',
+      }],
+      tue: [{
+        id: 12345,
+        name: 'InfoWars',
+        channel: 'InfoWars',
+        start: '12:00',
+      }],
+      wed: [{
+        id: 12345,
+        name: 'InfoWars',
+        channel: 'InfoWars',
+        start: '12:00',
+      }],
+      thu: [{
+        id: 12345,
+        name: 'InfoWars',
+        channel: 'InfoWars',
+        start: '12:00',
+      }],
+      fri: [{
+        id: 12345,
+        name: 'InfoWars',
+        channel: 'InfoWars',
+        start: '12:00',
+      }],
+      sat: []
+    }
   })
   log(`schedule: ${JSON.stringify(schedule)}`)
 
@@ -170,11 +197,13 @@ chrome.webNavigation.onDOMContentLoaded.addListener(async ({ tabId, url }) => {
   // }
 
   // const { options } = await chrome.storage.local.get('options');
-  chrome.scripting.executeScript({
-    target: { tabId },
-    files: ['content.js']
-    // ...options
-  })
+
+  // chrome.scripting.executeScript({
+  //   target: { tabId },
+  //   files: ['content.js']
+  //   // ...options
+  // })
+
 })
 
 // keep awake
