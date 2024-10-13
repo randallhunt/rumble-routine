@@ -56,7 +56,7 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
       sat: []
     }
   })
-  log(`schedule: ${JSON.stringify(schedule)}`)
+  // log(`schedule: ${JSON.stringify(schedule)}`)
 
   await chrome.storage.sync.set({ schedule })
 

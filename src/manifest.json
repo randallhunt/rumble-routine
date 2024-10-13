@@ -7,11 +7,21 @@
   "background": {
     "service_worker": "worker.js"
   },
-  "content_scripts": [{
-    "matches": ["https://rumble.com/*"],
-    "js": ["./content.js"],
-    "css": ["./content.css"]
-  }],
+  "content_scripts": [
+    {
+      "matches": ["https://rumble.com/*"],
+      "js": ["./content.js"],
+      "css": ["./content.css"]
+    },
+    {
+      "matches": ["https://rumble.com/c/*"],
+      "js": ["./channel.js"]
+    },
+    {
+      "matches": ["https://rumble.com/v*"],
+      "js": ["./channel.js"]
+    }
+  ],
   "minimum_chrome_version": "92",
   "permissions": [
     "activeTab",

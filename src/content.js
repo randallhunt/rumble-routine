@@ -1,6 +1,6 @@
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-function getChannel () {
+function RubmleRoutineGetChannel () {
   const channelEl = document.querySelector('[rel="author"]')
   if (!channelEl) return null
   const channel = channelEl.href.split('/').pop()
@@ -13,46 +13,20 @@ function getChannel () {
   }
 }
 
-chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
-  const { message } = response
-  if (message.type === 'show-bar') {
-    displayBar()
-    return
-  }
+function RumbleRoutineEstimateTime (t) {
+  const dt = new Date(t ?? undefined)
+  const h = dt.getHours()
+  const d = days[dt.getDay()]
+}
+// const creator = RubmleRoutineGetChannel()
 
-  if (message.type === 'open-settings') {
-    return
-  }
-
-  // if (message == "settings-opened") {
-  //   const url = window.location
-  //   if (
-  //     url.pathname.slice(0, 3) === '/c/' ||
-  //     url.pathname.slice(0, 2) === '/v'
-  //   ) {
-  //     const author = document.querySelector('[rel="author"]')
-  //     const uid = author.href.split('/').pop()
-  //     console.log(uid)
-  //     // log(uid)
-  //     // document.querySelector('.thumbnail__thumb--live')
-  //     return
-  //   }
-  // }
-})
-
-// async function sendMessage () {
-//   // const response = await chrome.runtime.sendMessage({ message: { type: "hello" } });
-//   // do something with response here, not outside the function
-//   // console.log(response);
+// if (creator.channel) {
+//   // alert('creator')
+//   RubmleRoutineDisplayBar()
 // }
 
-const creator = getChannel()
-if (creator) {
-  displayBar()
-}
-
-async function addToSchedule () {
-  const { author, channel } = getChannel()
+async function RubmleRoutineAddToSchedule () {
+  const { author, channel } = RubmleRoutineGetChannel()
   const response = await chrome.runtime.sendMessage({
     message: {
       author,
@@ -63,22 +37,43 @@ async function addToSchedule () {
   closeBar()
 }
 
-function closeBar () {
+function RubmleRoutineCloseBar () {
   const el = document.getElementById('rumble-routine-bar')
   if (el) el.parentElement.removeChild(el)
 }
 
-async function displayBar () {
-  // let el = document.getElementById('rumble-routine-bar')
-  // if (el) el.parentElement.removeChild(el)
-  closeBar()
+async function RubmleRoutineDisplayBar () {
+  RubmleRoutineCloseBar()
+  const dt = new Date()
+
   const el = document.createElement('div')
   el.id = 'rumble-routine-bar'
 
   const div = document.createElement('div')
-  // div.innerHTML = 'This program is not in your schedule'
-  // div.style.textShadow = '1px 1px 2px white'
   el.appendChild(div)
+
+  const hours = document.createElement('select')
+  Array.from({ length: 24 }, (_,i) => {
+    const option = document.createElement('option')
+    option.value = i
+    option.label = ('0' + i).slice(-2)
+    hours.appendChild(option)
+  })
+  hours.selectedIndex = dt.getHours()
+  div.appendChild(hours)
+
+  const colon = document.createElement(':')
+  colon.innerHTML = ':'
+  div.appendChild(colon)
+
+  const minutes = document.createElement('select')
+  Array.prototype.forEach.call(['00', '30'], val => {
+    const option = document.createElement('option')
+    option.value = val
+    option.label = val
+    minutes.appendChild(option)
+  })
+  div.appendChild(minutes)
 
   const sked = document.createElement('div')
   sked.className = 'inline-schedule'
@@ -92,17 +87,32 @@ async function displayBar () {
   div.appendChild(sked)
 
   const button = document.createElement('button')
-  button.innerHTML = 'Add It'
+  button.innerHTML = 'Save'
   button.className = 'btn btn-green btn-sm media-subscribe'
-  button.addEventListener('click', addToSchedule)
+  button.addEventListener('click', RubmleRoutineAddToSchedule)
   div.appendChild(button)
 
   const close = document.createElement('a')
   close.className = 'rumbleroutine-closebutton'
   close.href = '#'
   close.innerHTML = 'X'
-  close.addEventListener('click', closeBar)
+  close.addEventListener('click', RubmleRoutineCloseBar)
 
   el.appendChild(close)
   document.body.appendChild(el)
+
+  const dd = days[dt.getDay()].toLowerCase()
+  document.getElementById(`rumbleroutine-${dd}`).checked = true
 }
+
+chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
+  const { message } = response
+  if (message.type === 'show-bar') {
+    RubmleRoutineisplayBar()
+    return
+  }
+
+  if (message.type === 'open-settings') {
+    return
+  }
+})
