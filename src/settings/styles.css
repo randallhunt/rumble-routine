@@ -35,7 +35,7 @@ body {
   width: 25%;
 }
 
-.schedule-creator {
+.schedule-channel {
   max-width: 200px;
   width: 25%;
 }
@@ -112,6 +112,7 @@ table#scheduleTable td {
   display: inline-block;
   font-size: 14px;
   font-weight: bold;
+  padding-right: 4px;
   width: 80px;
 }
 
@@ -123,6 +124,7 @@ table#scheduleTable td {
 .current-source button {
   border-radius: 5px;
   font-size: 16px;
+  margin: 5px;
 }
 
 .input-row {
@@ -139,6 +141,25 @@ table#scheduleTable td {
   text-align: right;
 }
 
+.input-schedule {
+  background-color: #fff;
+  border: solid 1px #000;
+  display: flex;
+  flex-direction: row;
+}
 .input-day {
+  display: flex;
+  flex-direction: column;
   white-space: nowrap;
+}
+.input-day label {
+  order: 1;
+  padding: 1px 3px;
+  text-align: center;
+  width: auto;
+}
+.input-day input {
+  margin: 4px;
+  order: 2;
+  text-align: center;
 }

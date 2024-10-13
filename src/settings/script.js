@@ -59,9 +59,9 @@ function makeRow (item) {
   nameCell.className = 'schedule-name'
   nameCell.innerHTML = item.name
 
-  const creatorCell = document.createElement('div')
-  creatorCell.className = 'schedule-creator'
-  creatorCell.innerHTML = item.channel
+  const channelCell = document.createElement('div')
+  channelCell.className = 'schedule-channel'
+  channelCell.innerHTML = item.channel
 
   const startCell = document.createElement('div')
   startCell.className = 'schedule-start'
@@ -81,7 +81,7 @@ function makeRow (item) {
 
   row.appendChild(actionsCell)
   row.appendChild(nameCell)
-  row.appendChild(creatorCell)
+  row.appendChild(channelCell)
   row.appendChild(startCell)
   row.appendChild(daysCell)
   return row
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   <div class="schedule-row">
     <div class="heading schedule-actions"></div>
     <div class="heading schedule-name">Name</div>
-    <div class="heading schedule-creator">Creator</div>
+    <div class="heading schedule-channel">Channel</div>
     <div class="heading schedule-start">Time</div>
     <div class="heading schedule-days">Days</div>
   </div>

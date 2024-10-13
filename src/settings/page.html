@@ -20,52 +20,57 @@
       <div class="current-schedule">
         <div class="input-row"><label>Time:</label> <input id="current-start" type="text" value="" /></div>
         <div class="input-row"><label>Days:</label>
-          <div>
-            <span class="input-day"><input type="checkbox" id="current-sun" value="sun" /> <label for="current-sun">Sunday</label></span>
-            <span class="input-day"><input type="checkbox" id="current-mon" value="mon" /> <label for="current-mon">Monday</label></span>
-            <span class="input-day"><input type="checkbox" id="current-tue" value="tue" /> <label for="current-tue">Tuesday</label></span>
-            <span class="input-day"><input type="checkbox" id="current-wed" value="wed" /> <label for="current-wed">Wednesday</label></span>
-            <span class="input-day"><input type="checkbox" id="current-thu" value="thu" /> <label for="current-thu">Thursday</label></span>
-            <span class="input-day"><input type="checkbox" id="current-fri" value="fri" /> <label for="current-fri">Friday</label></span>
-            <span class="input-day"><input type="checkbox" id="current-sat" value="sat" /> <label for="current-sat">Saturday</label></span>
+          <div class="input-schedule">
+            <span class="input-day"><input type="checkbox" id="current-sun" value="sun" /> <label for="current-sun">Sun</label></span>
+            <span class="input-day"><input type="checkbox" id="current-mon" value="mon" /> <label for="current-mon">Mon</label></span>
+            <span class="input-day"><input type="checkbox" id="current-tue" value="tue" /> <label for="current-tue">Tue</label></span>
+            <span class="input-day"><input type="checkbox" id="current-wed" value="wed" /> <label for="current-wed">Wed</label></span>
+            <span class="input-day"><input type="checkbox" id="current-thu" value="thu" /> <label for="current-thu">Thu</label></span>
+            <span class="input-day"><input type="checkbox" id="current-fri" value="fri" /> <label for="current-fri">Fri</label></span>
+            <span class="input-day"><input type="checkbox" id="current-sat" value="sat" /> <label for="current-sat">Sat</label></span>
           </div>
         </div>
         <div><button id="addbtn">Add to Schedule</button></div>
       </div>
     </form>
 
-    <h2>Monday</h2>
-    <div id="scheduleTable">
-      <div class="schedule-row">
-        <div class="heading schedule-actions">&nbsp;</div>
-        <div class="heading schedule-name">Name</div>
-        <div class="heading schedule-creator">Creator</div>
-        <div class="heading schedule-start">Time</div>
-        <div class="heading schedule-days">Days</div>
+    <div id="schedule-display">
+
+      <h2>Monday</h2>
+      <div id="scheduleTable" class="schedule-table">
+        <div class="schedule-row">
+          <div class="heading schedule-actions">&nbsp;</div>
+          <div class="heading schedule-name">Name</div>
+          <div class="heading schedule-channel">Channel</div>
+          <div class="heading schedule-start">Time</div>
+          <div class="heading schedule-days">Days</div>
+        </div>
       </div>
+
+      <h2>Tuesday</h2>
+      <div id="TueSchedule">
+        <div class="schedule-row">
+          <div class="heading schedule-actions">&nbsp;</div>
+          <div class="heading schedule-name">Name</div>
+          <div class="heading schedule-creator">Creator</div>
+          <div class="heading schedule-start">Time</div>
+          <div class="heading schedule-days">Days</div>
+        </div>
+      </div>
+
+      <h2>Wednesday</h2>
+      <div id="WedSchedule">
+        <div class="schedule-row">
+          <div class="heading schedule-actions">&nbsp;</div>
+          <div class="heading schedule-name">Name</div>
+          <div class="heading schedule-creator">Creator</div>
+          <div class="heading schedule-start">Time</div>
+          <div class="heading schedule-days">Days</div>
+        </div>
+      </div>
+
     </div>
 
-    <h2>Tuesday</h2>
-    <div id="TueSchedule">
-      <div class="schedule-row">
-        <div class="heading schedule-actions">&nbsp;</div>
-        <div class="heading schedule-name">Name</div>
-        <div class="heading schedule-creator">Creator</div>
-        <div class="heading schedule-start">Time</div>
-        <div class="heading schedule-days">Days</div>
-      </div>
-    </div>
-
-    <h2>Wednesday</h2>
-    <div id="WedSchedule">
-      <div class="schedule-row">
-        <div class="heading schedule-actions">&nbsp;</div>
-        <div class="heading schedule-name">Name</div>
-        <div class="heading schedule-creator">Creator</div>
-        <div class="heading schedule-start">Time</div>
-        <div class="heading schedule-days">Days</div>
-      </div>
-    </div>
   </body>
   <script src="script.js" type="module"></script>
 </html>
