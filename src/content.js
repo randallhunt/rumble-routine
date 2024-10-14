@@ -1,25 +1,8 @@
-// const dayAbbr = d => d.toLowerCase().substring(0, 3)
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-// const days = dayNames.map(dayAbbr)
-// const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
-// get channel info
-function RubmleRoutineGetChannel () {
-  const channelEl = document.querySelector('[rel="author"]')
-  if (!channelEl) return null
-  const channel = channelEl.href.split('/').pop()
-  const authorEl = channelEl.querySelector('.media-heading-name')
-  const author = authorEl?.innerHTML.trim()
-
-  return {
-    author,
-    channel
-  }
-}
 
 // add to schedule
 async function RubmleRoutineAddToSchedule () {
-  const { author, channel } = RubmleRoutineGetChannel()
+  const { name, channel } = RubmleRoutineGetChannel()
   const hours = document.getElementById('rumbleroutine-hours').value
   const minutes = document.getElementById('rumbleroutine-minutes').value
   const start = `${hours}:${minutes}`
@@ -29,42 +12,53 @@ async function RubmleRoutineAddToSchedule () {
   let confirmed = true
   const newSchedule = { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] }
   dayNames.forEach(dayName => {
+    if (!confirmed) return
     const day = dayName.toLowerCase().substring(0, 3)
     let items = schedule[day]
+
+    // TODO: find anything in the time slot,  remove if match, or alter if confirmed
+
+
     if (!document.getElementById(`rumbleroutine-${day}`).checked) {
-      newSchedule[day] = items.filter(item => item.start !== start && item.channel !== channel)
+      newSchedule[day] = items.filter(item => !(item.start == start && item.channel == channel))
       return
     }
+
+    // iterate items for this day
     schedule[day].forEach(item => {
+      if (!confirmed) return
       if (item.start == start && item.channel != channel) {
         if (!confirm(`You already have ${item.channel} scheduled for ${dayName} at that time. Replace it?`)) {
           confirmed = false
           return
         }
-        items.filter(item => item.start !== start)
+        items = items.filter(item => item.start !== start)
       }
+    })
+    if (confirmed) {
       items.push({
         id: new Date().valueOf(),
-        author,
+        name,
         channel,
         start
       })
-      newSchedule[day] = items
+    }
+    newSchedule[day] = items
+})
+  console.log('confirmed: ', confirmed)
+  if (confirmed) {
+    console.log(newSchedule)
+    chrome.storage.sync.set({ schedule: newSchedule })
+
+    RubmleRoutineCloseBar()
+    const response = await chrome.runtime.sendMessage({
+      message: {
+        name,
+        channel,
+        type: 'add-to-schedule'
+      }
     })
-    console.log('confirmed: ', confirmed)
-    if (confirmed) {
-      console.log(newSchedule)
-      chrome.storage.sync.set({ schedule: newSchedule })
-    }
-  })
-  RubmleRoutineCloseBar()
-  const response = await chrome.runtime.sendMessage({
-    message: {
-      author,
-      channel,
-      type: 'add-to-schedule'
-    }
-  })
+  }
 }
 
 // close the bar

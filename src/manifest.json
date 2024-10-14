@@ -15,11 +15,11 @@
     },
     {
       "matches": ["https://rumble.com/c/*"],
-      "js": ["./channel.js"]
+      "js": ["./content-channel.js"]
     },
     {
       "matches": ["https://rumble.com/v*"],
-      "js": ["./channel.js"]
+      "js": ["./content-video.js"]
     }
   ],
   "minimum_chrome_version": "92",
