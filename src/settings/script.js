@@ -112,7 +112,9 @@ async function redraw() {
   days.forEach((day, i) => {
     const table = document.getElementById(`${day}-schedule`)
     table.innerHTML = `<h2>${dayNames[i]}</h2>`
-    const sked = schedule[day]
+    const sked = schedule[day].sort((a, b) => {
+      return a.start.localeCompare(b.start)
+    })
     sked.forEach(item => {
       table.appendChild(makeRow(item))
     })

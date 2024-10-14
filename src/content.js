@@ -82,8 +82,8 @@ async function RubmleRoutineDisplayBar () {
   hours.id = 'rumbleroutine-hours'
   Array.from({ length: 24 }, (_,i) => {
     const option = document.createElement('option')
-    option.value = i
-    option.label = ('0' + i).slice(-2)
+    option.value = ('0' + i).slice(-2)
+    option.label = i
     hours.appendChild(option)
   })
   hours.selectedIndex = dt.getHours()
@@ -130,8 +130,32 @@ async function RubmleRoutineDisplayBar () {
   el.appendChild(close)
   document.body.appendChild(el)
 
-  const dd = dayNames[dt.getDay()].toLowerCase().substring(0, 3)
-  document.getElementById(`rumbleroutine-${dd}`).checked = true
+  RumbleRoutineUpdateChecked()
+
+  // const dd = dayNames[dt.getDay()].toLowerCase().substring(0, 3)
+  // document.getElementById(`rumbleroutine-${dd}`).checked = true
+}
+
+async function RumbleRoutineUpdateChecked() {
+  const hours = document.getElementById('rumbleroutine-hours').value
+  const minutes = document.getElementById('rumbleroutine-minutes').value
+  const start = `${hours}:${minutes}`
+  console.log('start', start)
+
+  const { channel } = RubmleRoutineGetChannel()
+  const { schedule } = await chrome.storage.sync.get({ 
+    schedule: { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] }
+  })
+  console.log('schedule', schedule)
+
+  dayNames.forEach(dayName => {
+    const d = dayName.toLowerCase().substring(0, 3)
+    const present = schedule[d].find(item => item.channel == channel && item.start == start)
+    console.log(d, present)
+    if (present) {
+      document.getElementById(`rumbleroutine-${d}`).checked = true
+    }
+  })
 }
 
 // inter-process messaging

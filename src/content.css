@@ -41,3 +41,8 @@
 #rumble-routine-bar .inline-schedule {
   display: inline-block;
 }
+
+#rumbleroutine-hours,
+#rumbleroutine-minutes {
+  background-color: #fff;
+}
