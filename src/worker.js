@@ -1,26 +1,26 @@
 importScripts('./managed-tab.js', './utils.js')
 
-const settingsManager = new ManagedTab('./settings/page.html')
+const settingsManager = new ManagedTab('./settings/page.html', 'settingsTab')
+const currentStream = new ManagedTab('https://rumble.com', 'streamingTab')
 
 const WeeklyIntervalInMinutes = 10080 // 7*24*60
 
-// const currentStream = new ManagedTab('https://rumble.com/c/InfoWars')
 
-async function getReusableTab () {
-  const { rumbleTab } = chrome.storage.sync.get('rumbleTab')
-  let tab
-  if (rumbleTab) {
-    tab = await chrome.tabs.get(rumbleTab)
-    const url = new URL(tab.url)
-    if (!/rumble.com/.test(url.hostname.match))
-      tab = null
-  }
-  if (!tab) {
-    tab = await chrome.tabs.create({})
-  }
-  chrome.storage.sync.set({ rumbleTab: tab.id })
-  return tab
-}
+// async function getReusableTab () {
+//   const { rumbleTab } = chrome.storage.sync.get('rumbleTab')
+//   let tab
+//   if (rumbleTab) {
+//     tab = await chrome.tabs.get(rumbleTab)
+//     const url = new URL(tab.url)
+//     if (!/rumble.com/.test(url.hostname.match))
+//       tab = null
+//   }
+//   if (!tab) {
+//     tab = await chrome.tabs.create({})
+//   }
+//   chrome.storage.sync.set({ rumbleTab: tab.id })
+//   return tab
+// }
 
 // get the next day by name
 Date.prototype.next = function (dayName) {
@@ -67,12 +67,12 @@ chrome.alarms.onAlarm.addListener(async alarm => {
   const { schedule } = await chrome.storage.sync.get({
     schedule: { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] }
   })
-  console.log(alarm.name)
   const [day, start, channel] = alarm.name.split(',')
   Array.prototype.forEach.call(schedule[day], async (item) => {
     if (item.channel == channel && item.start == start) {
-      const tab = getReusableTab()
-      chrome.tabs.update(tab.id, {url: `https://rumble.com/c/${item.channel}` })
+      currentStream.openUrl(`https://rumble.com/c/${item.channel}`)
+      // const tab = getReusableTab()
+      // chrome.tabs.update(tab.id, {url: `https://rumble.com/c/${item.channel}` })
     }
   })
 })
@@ -119,10 +119,11 @@ chrome.action.onClicked.addListener(async () => {
     //   }
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true })
     const response = await chrome.tabs.sendMessage(tab.id, { message: { type: 'show-bar' } })
+    console.log('response', response)
     return
   }
 
-  settingsManager.openSettingsTab()
+  settingsManager.openTab()
 })
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -133,7 +134,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // log(data)
     // log(`add ${message.channel} to schedule`)
 
-    settingsManager.openSettingsTab(message)
+    settingsManager.openTab(message)
     // chrome.tabs.create({ url: 'settings/page.html' }, async (tab) => {
     //   const response = await chrome.tabs.sendMessage(tab.id, message)
     //   // log(`tab created ${tab.id}`)

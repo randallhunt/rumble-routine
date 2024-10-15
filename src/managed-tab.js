@@ -1,5 +1,5 @@
 class ManagedTab {
-  constructor (url, storageName = 'settingsTabId') {
+  constructor (url, storageName) {
     this.url = url
     this.setting = storageName
     this.message = null
@@ -10,10 +10,31 @@ class ManagedTab {
 
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       const { message } = request
+      // TODO: configurable message type
       if (message.type === 'settings-tab-ready') this.ready = true
     })
   }
 
+  getReusableTab = async () => {
+    const setting = await chrome.storage.local.get(this.setting)
+    const tabId = setting[this.setting]
+    let tab
+    if (tabId) {
+      try {
+        tab = await chrome.tabs.get(tabId)
+        if (tab.url.indexOf(this.url) == -1)
+          tab = null          
+      } catch (error) {
+        tab = null
+      }
+    }
+    if (!tab) {
+      tab = await chrome.tabs.create({})
+    }
+    chrome.storage.local.set({ [this.setting]: tab.id })
+    return tab
+  }
+    
   waitForTab = () => {
     this.timer = setTimeout(() => {
       if (this.ready) {
@@ -29,12 +50,10 @@ class ManagedTab {
     }, 50)
   }
 
-  openSettingsTab = async (message = null) => {
+  openTab = async ({url = this.url, message = null}) => {
     this.message = message
-    let tab = await this.getOpenTab()
-    if (!tab) {
-      tab = this.createTab()
-    }
+    const tab = await this.getReusableTab()
+    chrome.tabs.update(tab.id, { url })
     if (!message) {
       this.timer = null
       return
@@ -44,22 +63,8 @@ class ManagedTab {
     this.waitForTab()
   }
 
-  createTab = async () => {
-    const tab = await chrome.tabs.create({ url: this.url })
-    await chrome.storage.local.set({ [this.setting]: tab.id })
-    this.tabId = tab.id
-    return tab
-  }
-
-  getOpenTab = async () => {
-    const { tabId } = await chrome.storage.local.get(this.setting)
-    if (!tabId) return null
-    const tab = await chrome.tabs.get(tabId)
-    if (tab.url === this.url) {
-      chrome.tabs.highlight({ tabs: tab.id })
-      this.tabId = tab.id
-      return tab
-    }
-    return null
+  openUrl = async (url) => {
+    let tab = await this.getReusableTab()
+    await chrome.tabs.update(tab.id, { url })
   }
 }
