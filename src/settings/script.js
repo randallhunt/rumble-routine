@@ -99,8 +99,8 @@ function makeRow (item) {
 
   row.appendChild(actionsCell)
   row.appendChild(startCell)
-  row.appendChild(nameCell)
   row.appendChild(channelCell)
+  row.appendChild(nameCell)
   return row
 }
 

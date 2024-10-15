@@ -9,6 +9,14 @@ body {
   padding: 10px;
 }
 
+#schedule-display {
+  max-width: 760px;
+}
+
+#schedule-display h1 {
+  margin: 1em 2em;
+}
+
 .schedule-table {
   background-color: #fff;
   border: solid 1px #000;
@@ -32,27 +40,29 @@ body {
 }
 
 .schedule-name {
-  max-width: 150px;
-  width: 25%;
+  flex-grow: 2;
+  width: 60%;
 }
 
 .schedule-channel {
-  max-width: 200px;
-  width: 25%;
+  /* flex-grow: 1; */
+  max-width: 150px;
+  width: 20%;
 }
 
 .schedule-start {
-  flex-grow: 1;
+  /* flex-grow: 1; */
+  max-width: 100px;
   width: 10%;
 }
 
-.schedule-days {
+/* .schedule-days {
   flex-grow: 1;
   width: 30%;
-}
+} */
 
 .schedule-actions {
-  max-width: 100px;
+  max-width: 80px;
   width: 10%;
 }
 

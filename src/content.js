@@ -14,13 +14,13 @@ async function RubmleRoutineAddToSchedule () {
   dayNames.forEach(dayName => {
     if (!confirmed) return
     const day = dayName.toLowerCase().substring(0, 3)
-    let items = schedule[day]
+    let items = schedule[day].filter(item => !(item.start == start && item.channel == channel))
 
     // TODO: find anything in the time slot,  remove if match, or alter if confirmed
 
 
     if (!document.getElementById(`rumbleroutine-${day}`).checked) {
-      newSchedule[day] = items.filter(item => !(item.start == start && item.channel == channel))
+      newSchedule[day] = items //.filter(item => !(item.start == start && item.channel == channel))
       return
     }
 
@@ -45,9 +45,7 @@ async function RubmleRoutineAddToSchedule () {
     }
     newSchedule[day] = items
 })
-  console.log('confirmed: ', confirmed)
   if (confirmed) {
-    console.log(newSchedule)
     chrome.storage.sync.set({ schedule: newSchedule })
 
     RubmleRoutineCloseBar()
@@ -80,6 +78,7 @@ async function RubmleRoutineDisplayBar () {
 
   const hours = document.createElement('select')
   hours.id = 'rumbleroutine-hours'
+  hours.addEventListener('change', RumbleRoutineUpdateChecked)
   Array.from({ length: 24 }, (_,i) => {
     const option = document.createElement('option')
     option.value = ('0' + i).slice(-2)
@@ -95,6 +94,7 @@ async function RubmleRoutineDisplayBar () {
 
   const minutes = document.createElement('select')
   minutes.id = 'rumbleroutine-minutes'
+  minutes.addEventListener('change', RumbleRoutineUpdateChecked)
   Array.prototype.forEach.call(['00', '30'], val => {
     const option = document.createElement('option')
     option.value = val
@@ -140,18 +140,15 @@ async function RumbleRoutineUpdateChecked() {
   const hours = document.getElementById('rumbleroutine-hours').value
   const minutes = document.getElementById('rumbleroutine-minutes').value
   const start = `${hours}:${minutes}`
-  console.log('start', start)
 
   const { channel } = RubmleRoutineGetChannel()
   const { schedule } = await chrome.storage.sync.get({ 
     schedule: { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] }
   })
-  console.log('schedule', schedule)
 
   dayNames.forEach(dayName => {
     const d = dayName.toLowerCase().substring(0, 3)
     const present = schedule[d].find(item => item.channel == channel && item.start == start)
-    console.log(d, present)
     if (present) {
       document.getElementById(`rumbleroutine-${d}`).checked = true
     }
