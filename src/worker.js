@@ -1,68 +1,97 @@
 importScripts('./managed-tab.js', './utils.js')
 
 const settingsManager = new ManagedTab('./settings/page.html')
+
+const WeeklyIntervalInMinutes = 10080 // 7*24*60
+
 // const currentStream = new ManagedTab('https://rumble.com/c/InfoWars')
 
-function log (text) {
-  chrome.notifications.create({
-    iconUrl: chrome.runtime.getURL('icon1.jpg'),
-    message: text,
-    title: 'Rumble Routine',
-    type: 'basic'
+async function getReusableTab () {
+  const { rumbleTab } = chrome.storage.sync.get('rumbleTab')
+  let tab
+  if (rumbleTab) {
+    tab = await chrome.tabs.get(rumbleTab)
+    const url = new URL(tab.url)
+    if (!/rumble.com/.test(url.hostname.match))
+      tab = null
+  }
+  if (!tab) {
+    tab = await chrome.tabs.create({})
+  }
+  chrome.storage.sync.set({ rumbleTab: tab.id })
+  return tab
+}
+
+// get the next day by name
+Date.prototype.next = function (dayName) {
+  const names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  let target = names.map(d => d.toLowerCase().substring(0, dayName.length)).indexOf(dayName.toLowerCase())
+  if (target == -1) throw new Error("bad day name specified")
+  const today = new Date(this.valueOf())
+  let current = today.getDay() + 1
+  let add = 1
+  while (current != target) {
+    add += 1
+    current = (current + 1) % 7
+  }
+  today.setDate(today.getDate() + add)
+  return today
+}
+
+async function startAlarms () {
+  await chrome.alarms.clearAll()
+  const { schedule } = await chrome.storage.sync.get({
+    schedule: { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] }
+  })
+  const now = new Date()
+  Array.prototype.forEach.call(['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'], (dayOfWeek, dayIndex) => {
+    Array.prototype.forEach.call(schedule[dayOfWeek],  (item) => {
+      const {start, channel} = item
+      const [hours, minutes] = start.split(':')
+      let alarmDate = new Date()
+      alarmDate.setHours(+hours)
+      alarmDate.setMinutes(+minutes)
+      alarmDate.setSeconds(59)
+      if ((dayIndex != now.getDay()) || (alarmDate.getHours() < now.getHours())) {
+        alarmDate = alarmDate.next(dayOfWeek)
+      }
+      chrome.alarms.create(`${dayOfWeek},${start},${channel}`, {
+        periodInMinutes: WeeklyIntervalInMinutes,
+        when: alarmDate.valueOf()
+      })
+    })
   })
 }
 
+chrome.alarms.onAlarm.addListener(async alarm => {
+  const { schedule } = await chrome.storage.sync.get({
+    schedule: { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] }
+  })
+  console.log(alarm.name)
+  const [day, start, channel] = alarm.name.split(',')
+  Array.prototype.forEach.call(schedule[day], async (item) => {
+    if (item.channel == channel && item.start == start) {
+      const tab = getReusableTab()
+      chrome.tabs.update(tab.id, {url: `https://rumble.com/c/${item.channel}` })
+    }
+  })
+})
+
 chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   let { options } = await chrome.storage.sync.get({ options: {} })
-  // log(`options: ${JSON.stringify(options)}`)
   if (!options) {
     options = {}
     await chrome.storage.sync.set({ options })
   }
 
-  const { schedule } = await chrome.storage.sync.get({
-    schedule: {
-      sun: [],
-      mon: [{
-        id: 12345,
-        name: 'InfoWars',
-        channel: 'InfoWars',
-        start: '12:00',
-      }],
-      tue: [{
-        id: 12345,
-        name: 'InfoWars',
-        channel: 'InfoWars',
-        start: '12:00',
-      }],
-      wed: [{
-        id: 12345,
-        name: 'InfoWars',
-        channel: 'InfoWars',
-        start: '12:00',
-      }],
-      thu: [{
-        id: 12345,
-        name: 'InfoWars',
-        channel: 'InfoWars',
-        start: '12:00',
-      }],
-      fri: [{
-        id: 12345,
-        name: 'InfoWars',
-        channel: 'InfoWars',
-        start: '12:00',
-      }],
-      sat: []
-    }
-  })
-  // log(`schedule: ${JSON.stringify(schedule)}`)
-
-  await chrome.storage.sync.set({ schedule })
-
   if (reason === 'install') {
-    // add options object, maybe?
+    const { schedule } = await chrome.storage.sync.get({
+      schedule: { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] }
+    })
+    await chrome.storage.sync.set({ schedule })
+
   }
+  startAlarms()
   // if (reason == 'install' || 'update' )
   // log(`Installed - ${reason}`)
 })
@@ -114,18 +143,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   //   sendResponse({farewell: "goodbye"});
 })
 
-// await chrome.storage.sync.set({ options })
-// let options = {}
-
-// async function getOptions() {
-//   const options = await chrome.storage.sync.get('options')
-//   console.log('options', options)
-// }
-// getOptions()
-
 chrome.action.iconUrl = chrome.runtime.getURL('icon.svg')
-
-// log('background script loaded')
 
 async function setBadgeText (text) {
   await chrome.action.setBadgeText({ text })
@@ -205,11 +223,3 @@ chrome.webNavigation.onDOMContentLoaded.addListener(async ({ tabId, url }) => {
   // })
 
 })
-
-// keep awake
-
-// chrome.alarms.getAll((e) => {
-//   0 == e.length ? chrome.power.releaseKeepAwake() : chrome.power.requestKeepAwake("display");
-// });
-
-const WeeklyIntervalInMinutes = 10080 // 7*24*60
