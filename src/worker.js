@@ -105,25 +105,18 @@ chrome.action.onClicked.addListener(async () => {
   const { hostname, pathname } = new URL(tab.url)
 
   const rumble = /rumble\.com/.test(hostname)
-  // log(rumble ? 'true' : 'false')
   if (rumble) {
-    //   if (
-    //     pathname.slice(0, 3) === '/c/' ||
-    //     pathname.slice(0, 2) === '/v'
-    //   ) {
-    //     const author = document.querySelector('[rel="author"]')
-    //     const uid = author.href.split('/').pop()
-    //     // log(uid)
-    //     // document.querySelector('.thumbnail__thumb--live')
-
-    //   }
-    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true })
-    const response = await chrome.tabs.sendMessage(tab.id, { message: { type: 'show-bar' } })
-    console.log('response', response)
-    return
+    if (
+      pathname.slice(0, 3) === '/c/' ||
+      pathname.slice(0, 2) === '/v'
+    ) {
+      const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true })
+      const response = await chrome.tabs.sendMessage(tab.id, { message: { type: 'show-bar' } })
+      console.log('response', response)
+      return
+    }
   }
-
-  settingsManager.openTab()
+  settingsManager.openTab({})
 })
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
