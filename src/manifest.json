@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Rumble Routine",
-  "description": "Rumble scheduler",
+  "description": "Create an autoplay schedule of your favorite Rumble live streams",
   "version": "1.0",
   "action": {},
   "background": {
@@ -22,6 +22,10 @@
       "js": ["./content-video.js"]
     }
   ],
+  "icons": {
+    "19": "./icons/icon-19.png",
+    "38": "./icons/icon-38.png"
+  },
   "minimum_chrome_version": "92",
   "permissions": [
     "activeTab",
