@@ -146,5 +146,5 @@ window.addEventListener('unload', () => {
 document.addEventListener('DOMContentLoaded', async () => {
   await redraw()
 
-  chrome.runtime.sendMessage({ message: { type: 'settings-tab-ready' } })
+  chrome.runtime.sendMessage({ message: { type: 'tab-ready' } })
 }, false)

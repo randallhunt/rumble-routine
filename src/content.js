@@ -163,7 +163,13 @@ chrome.runtime.onMessage.addListener((response, sender, sendResponse) => {
     return
   }
 
+  if (message.type == 'start-show') {
+    RumbleRoutineStartShow?.()
+  }
+
   if (message.type === 'open-settings') {
     return
   }
 })
+
+chrome.runtime.sendMessage({ message: { type: 'tab-ready' } })

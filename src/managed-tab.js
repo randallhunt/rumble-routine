@@ -10,8 +10,7 @@ class ManagedTab {
 
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       const { message } = request
-      // TODO: configurable message type
-      if (message.type === 'settings-tab-ready') this.ready = true
+      if (message.type === 'tab-ready') this.ready = true
     })
   }
 
@@ -32,28 +31,31 @@ class ManagedTab {
       tab = await chrome.tabs.create({})
     }
     chrome.storage.local.set({ [this.setting]: tab.id })
+    this.tabId = tab.id
     return tab
   }
     
   waitForTab = () => {
     this.timer = setTimeout(() => {
       if (this.ready) {
+        console.log('this.url', this.url)
         chrome.tabs.sendMessage(this.tabId, { message: this.message })
         return
       }
-      if (this.waitCount < 10) {
+      if (this.waitCount < 50) {
         this.waitCount++
         this.waitForTab()
         return
       }
       throw new Error('failed to open settings tab')
-    }, 50)
+    }, 100)
   }
 
   openTab = async ({url = this.url, message = null}) => {
     this.message = message
     const tab = await this.getReusableTab()
-    chrome.tabs.update(tab.id, { url })
+    this.tabId = tab.id
+    chrome.tabs.update(this.tabId, { url })
     if (!message) {
       this.timer = null
       return
@@ -61,10 +63,5 @@ class ManagedTab {
     this.ready = false
     this.waitCount = 0
     this.waitForTab()
-  }
-
-  openUrl = async (url) => {
-    let tab = await this.getReusableTab()
-    await chrome.tabs.update(tab.id, { url })
   }
 }

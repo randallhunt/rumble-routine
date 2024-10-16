@@ -13,4 +13,15 @@ function RubmleRoutineGetChannel () {
   }
 }
 
+function RumbleRoutineStartShow () {
+  let container = document.querySelector('.videostream--featured .thumbnail__thumb--live')
+  if (!container) {
+    container = document.querySelector('.thumbnail__grid .thumbnail__thumb--live')
+  }
+  if (!container) {
+    return
+  }
+  container.querySelector('a').click()
+}
+
 RubmleRoutineDisplayBar()

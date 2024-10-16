@@ -53,7 +53,8 @@ chrome.alarms.onAlarm.addListener(async alarm => {
   const [day, start, channel] = alarm.name.split(',')
   Array.prototype.forEach.call(schedule[day], async (item) => {
     if (item.channel == channel && item.start == start) {
-      currentStream.openUrl(`https://rumble.com/c/${item.channel}`)
+      const message = { type: 'start-show' }
+      currentStream.openTab({ url: `https://rumble.com/c/${item.channel}`, message })
     }
   })
 })
@@ -101,7 +102,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (message.type === 'add-to-schedule') {
     const data = JSON.stringify(message)
 
-    settingsManager.openTab(message)
+    settingsManager.openTab({message})
   }
 })
 
