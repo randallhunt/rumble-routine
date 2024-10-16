@@ -9,6 +9,13 @@ body {
   padding: 10px;
 }
 
+header {
+  background-color: #fff;
+  border: solid 1px #000;
+  max-width: 760px;
+  padding: 0 1em;
+}
+
 #schedule-display {
   max-width: 760px;
 }
@@ -23,6 +30,7 @@ body {
   display: flex;
   flex-direction: column;
   margin: 1em 0;
+  padding: 0 1em;
 }
 
 .schedule-table .heading {
@@ -72,7 +80,7 @@ body {
 
 .trash-icon {
   background-color: #fff;
-  background-image: url(../icon-delete.png);
+  background-image: url(./icon-delete.png);
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;

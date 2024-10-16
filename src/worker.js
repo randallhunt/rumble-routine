@@ -5,23 +5,6 @@ const currentStream = new ManagedTab('https://rumble.com', 'streamingTab')
 
 const WeeklyIntervalInMinutes = 10080 // 7*24*60
 
-
-// async function getReusableTab () {
-//   const { rumbleTab } = chrome.storage.sync.get('rumbleTab')
-//   let tab
-//   if (rumbleTab) {
-//     tab = await chrome.tabs.get(rumbleTab)
-//     const url = new URL(tab.url)
-//     if (!/rumble.com/.test(url.hostname.match))
-//       tab = null
-//   }
-//   if (!tab) {
-//     tab = await chrome.tabs.create({})
-//   }
-//   chrome.storage.sync.set({ rumbleTab: tab.id })
-//   return tab
-// }
-
 // get the next day by name
 Date.prototype.next = function (dayName) {
   const names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -71,8 +54,6 @@ chrome.alarms.onAlarm.addListener(async alarm => {
   Array.prototype.forEach.call(schedule[day], async (item) => {
     if (item.channel == channel && item.start == start) {
       currentStream.openUrl(`https://rumble.com/c/${item.channel}`)
-      // const tab = getReusableTab()
-      // chrome.tabs.update(tab.id, {url: `https://rumble.com/c/${item.channel}` })
     }
   })
 })
@@ -84,24 +65,20 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
     await chrome.storage.sync.set({ options })
   }
 
+  const tab = await getCurrentTab()
+  setBadge(tab.id, false)
+
   if (reason === 'install') {
     const { schedule } = await chrome.storage.sync.get({
       schedule: { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] }
     })
     await chrome.storage.sync.set({ schedule })
-
   }
   startAlarms()
-  // if (reason == 'install' || 'update' )
-  // log(`Installed - ${reason}`)
 })
 
 chrome.action.onClicked.addListener(async () => {
   const tab = await getCurrentTab()
-  // if (!tab?.url) {
-  //   setBadgeText('')
-  //   return
-  // }
   const { hostname, pathname } = new URL(tab.url)
 
   const rumble = /rumble\.com/.test(hostname)
@@ -121,51 +98,46 @@ chrome.action.onClicked.addListener(async () => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const { message } = request
-  // console.log(sender.tab ? 'from a content script:' + sender.tab.url : 'from the extension')
   if (message.type === 'add-to-schedule') {
     const data = JSON.stringify(message)
-    // log(data)
-    // log(`add ${message.channel} to schedule`)
 
     settingsManager.openTab(message)
-    // chrome.tabs.create({ url: 'settings/page.html' }, async (tab) => {
-    //   const response = await chrome.tabs.sendMessage(tab.id, message)
-    //   // log(`tab created ${tab.id}`)
-    // })
   }
-  // if (request.message.type === "hello")
-  //   sendResponse({farewell: "goodbye"});
 })
 
-chrome.action.iconUrl = chrome.runtime.getURL('icon.svg')
+// chrome.action.iconUrl = chrome.runtime.getURL('icon.svg')
 
-async function setBadgeText (text) {
-  await chrome.action.setBadgeText({ text })
+async function setBadge (tabId = undefined, active = false) {
+  const path = {
+    '19': active ? './icons/icon-19.png' : './icons/icon-19-off.png',
+    '38': active ? './icons/icon-38.png' : './icons/icon-38-off.png'
+  }
+  await chrome.action.setIcon({ tabId, path })
 }
 
 async function updateAction () {
   const tab = await getCurrentTab()
   if (!tab?.url) {
-    setBadgeText('')
+    setBadge(tab.id, false)
     return
   }
   const url = new URL(tab.url)
 
   const rumble = /rumble\.com/.test(url.hostname)
-  if (url.pathname.slice(0, 3) === '/c/') {
-    setBadgeText('user')
-    // document.querySelector('[rel="author"]')
-    // document.querySelector('.thumbnail__thumb--live')
-    return
+  if (rumble) {
+    if (url.pathname.slice(0, 3) === '/c/') {
+      setBadge(tab.id, true)
+      // document.querySelector('[rel="author"]')
+      // document.querySelector('.thumbnail__thumb--live')
+      return
+    }
+    if (url.pathname.slice(0, 2) === '/v') {
+      setBadge(tab.id, true)
+      // document.querySelector('[rel="author"]')
+      return
+    }
   }
-  if (url.pathname.slice(0, 2) === '/v') {
-    setBadgeText('vid')
-    // document.querySelector('[rel="author"]')
-    return
-  }
-  // if (!rumble)
-  setBadgeText('')
-  // setBadgeText(rumble)
+  setBadge(tab.id, false)
 }
 
 async function getCurrentTab () {
