@@ -118,7 +118,7 @@ async function setBadge (tabId = undefined, active = false) {
 async function updateAction () {
   const tab = await getCurrentTab()
   if (!tab?.url) {
-    setBadge(tab.id, false)
+    // setBadge(tab.id, false)
     return
   }
   const url = new URL(tab.url)
