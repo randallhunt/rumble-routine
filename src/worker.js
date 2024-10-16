@@ -1,6 +1,8 @@
 importScripts('./managed-tab.js', './utils.js')
 
-const settingsManager = new ManagedTab('./settings/page.html', 'settingsTab')
+const extensionId = chrome.runtime.id
+
+const settingsManager = new ManagedTab(`chrome-extension://${extensionId}/settings/page.html`, 'settingsTab')
 const currentStream = new ManagedTab('https://rumble.com', 'streamingTab')
 
 const WeeklyIntervalInMinutes = 10080 // 7*24*60

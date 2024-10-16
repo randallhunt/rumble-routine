@@ -38,7 +38,6 @@ class ManagedTab {
   waitForTab = () => {
     this.timer = setTimeout(() => {
       if (this.ready) {
-        console.log('this.url', this.url)
         chrome.tabs.sendMessage(this.tabId, { message: this.message })
         return
       }
@@ -51,11 +50,17 @@ class ManagedTab {
     }, 100)
   }
 
-  openTab = async ({url = this.url, message = null}) => {
+  openTab = async ({url = this.url, message = null, focus = true}) => {
     this.message = message
     const tab = await this.getReusableTab()
     this.tabId = tab.id
-    chrome.tabs.update(this.tabId, { url })
+    const updateProperties = {
+      url
+    }
+    if (focus) {
+      updateProperties.active = true
+    }
+    chrome.tabs.update(this.tabId, updateProperties)
     if (!message) {
       this.timer = null
       return
