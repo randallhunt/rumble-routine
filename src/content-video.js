@@ -11,4 +11,4 @@ function RubmleRoutineGetChannel () {
   }
 }
 
-RubmleRoutineDisplayBar()
+// RubmleRoutineDisplayBar()

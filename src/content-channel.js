@@ -24,4 +24,4 @@ function RumbleRoutineStartShow () {
   container.querySelector('a').click()
 }
 
-RubmleRoutineDisplayBar()
+// RubmleRoutineDisplayBar()
