@@ -30,13 +30,9 @@
   "permissions": [
     "activeTab",
     "alarms",
-    "notifications",
     "scripting",
     "storage",
     "tabs",
     "webNavigation"
-  ],
-  "host_permissions": [
-    "https://rumble.com/*"
   ]
 }

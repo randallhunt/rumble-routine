@@ -1,13 +1,14 @@
 /*eslint no-unused-vars: "off" */
 
-function log (text) {
-  chrome.notifications.create({
-    iconUrl: chrome.runtime.getURL('icon1.jpg'),
-    message: text,
-    title: 'Rumble Routine',
-    type: 'basic'
-  })
-}
+// log() was used for debugging, but is no longer needed
+// function log (text) {
+//   chrome.notifications.create({
+//     iconUrl: chrome.runtime.getURL('icon1.jpg'),
+//     message: text,
+//     title: 'Rumble Routine',
+//     type: 'basic'
+//   })
+// }
 
 function isRumble (url) {
   return /rumble\.com/.test(url.hostname)
