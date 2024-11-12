@@ -15,6 +15,4 @@ This is a Chrome extension, and it requires Chrome version 92 or higher.  That's
 
 ## Installation
 
-Since it's still in development, it isn't listed yet on the Chrome Extensions web site.  But you can download the source if you want and install it by hand.
-
-But I wouldn't recommend it... unless you're a developer and you want to lend a hand!  The current source isn't complete enough to be functional to a normal user just yet.
+Install directly from the [Chrome Extensions](https://chromewebstore.google.com/detail/rumble-routine/djaaljlanegcfhbnmgcneaijiafgcccc) web site. Or if you prefer, you can download the source from this repo and install by hand.
