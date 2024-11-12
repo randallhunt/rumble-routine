@@ -42,7 +42,16 @@
   display: inline-block;
 }
 
-#rumbleroutine-hours,
-#rumbleroutine-minutes {
+.rumble-routine-time-nudge {
+  border: solid 1px #000;
+  display: inline-block;
+}
+
+.rumble-routine-input {
   background-color: #fff;
+  border: 0;
+  cursor: ns-resize;
+  font-family: monospace;
+  font-size: 14px;
+  text-align: center;
 }
